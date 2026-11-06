@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 2,
+  "application": {
+    "id": "org.vexgraph.util.types",
+    "name": "types",
+    "displayName": "types",
+    "version": "0.1.0",
+    "type": "cli",
+    "authors": [
+      "vexgraph"
+    ],
+    "publisher": "vexgraph",
+    "description": "Width vocabulary: u8..u64, i8..i64, f16/f32/f64, byte",
+    "license": "MIT",
+    "homepage": "",
+    "icon": ""
+  },
+  "build": {
+    "entry": "types_test.c",
+    "sources": [
+      "types_test.c"
+    ],
+    "includes": [
+      "util"
+    ],
+    "dependencies": [],
+    "defines": [],
+    "options": [
+      "-Wall",
+      "-Wextra"
+    ],
+    "link": "executable"
+  },
+  "payload": {
+    "files": []
+  },
+  "targets": {},
+  "formats": [
+    "portable"
+  ],
+  "statePolicy": "clean"
+}

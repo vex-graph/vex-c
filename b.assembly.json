@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 2,
+  "application": {
+    "id": "org.vexgraph.util",
+    "name": "util",
+    "displayName": "util",
+    "version": "0.1.0",
+    "type": "lib",
+    "authors": [
+      "vexgraph"
+    ],
+    "publisher": "vexgraph",
+    "description": "The zero-dependency floor: annotations, THROW, platform, constructors, widths",
+    "license": "MIT",
+    "homepage": "",
+    "icon": ""
+  },
+  "build": {
+    "entry": "",
+    "sources": [],
+    "includes": [
+      "util"
+    ],
+    "defines": [],
+    "options": [
+      "-Wall",
+      "-Wextra"
+    ],
+    "link": "static"
+  },
+  "payload": {
+    "files": []
+  },
+  "targets": {},
+  "formats": [
+    "portable"
+  ],
+  "statePolicy": "clean"
+}
