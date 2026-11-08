@@ -17,7 +17,13 @@
   "build": {
     "entry": "",
     "sources": [
-      "lang/primitive.c"
+      "lang/primitive.c",
+      "vector/vec2.c",
+      "vector/vec3.c",
+      "vector/vec4.c",
+      "matrix/mat2.c",
+      "matrix/mat3.c",
+      "matrix/mat4.c"
     ],
     "includes": [
       "."

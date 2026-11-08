@@ -1,0 +1,46 @@
+{
+  "application": {
+    "id": "org.vexgraph.vexc.vector",
+    "name": "vector",
+    "displayName": "vector",
+    "version": "0.1.0",
+    "type": "cli",
+    "authors": [
+      "vexgraph"
+    ],
+    "publisher": "vexgraph",
+    "description": "Vector layouts: vec2/vec3/vec4 at b16/f32/d64, accessors and arithmetic",
+    "license": "MIT",
+    "homepage": "",
+    "icon": ""
+  },
+  "build": {
+    "entry": "vector_test.c",
+    "sources": [
+      "vector_test.c",
+      "../../lang/primitive.c",
+      "../../vector/vec2.c",
+      "../../vector/vec3.c",
+      "../../vector/vec4.c"
+    ],
+    "includes": [
+      "../.."
+    ],
+    "dependencies": [],
+    "defines": [],
+    "options": [
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "link": "executable"
+  },
+  "payload": {
+    "files": []
+  },
+  "targets": {},
+  "formats": [
+    "portable"
+  ],
+  "statePolicy": "clean"
+}

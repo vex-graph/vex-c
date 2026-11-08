@@ -1,0 +1,49 @@
+{
+  "application": {
+    "id": "org.vexgraph.vexc.matrix",
+    "name": "matrix",
+    "displayName": "matrix",
+    "version": "0.1.0",
+    "type": "cli",
+    "authors": [
+      "vexgraph"
+    ],
+    "publisher": "vexgraph",
+    "description": "Matrix layouts: mat2/mat3/mat4 at f32/d64, accessors, constructors, arithmetic",
+    "license": "MIT",
+    "homepage": "",
+    "icon": ""
+  },
+  "build": {
+    "entry": "matrix_test.c",
+    "sources": [
+      "matrix_test.c",
+      "../../lang/primitive.c",
+      "../../vector/vec2.c",
+      "../../vector/vec3.c",
+      "../../vector/vec4.c",
+      "../../matrix/mat2.c",
+      "../../matrix/mat3.c",
+      "../../matrix/mat4.c"
+    ],
+    "includes": [
+      "../.."
+    ],
+    "dependencies": [],
+    "defines": [],
+    "options": [
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "link": "executable"
+  },
+  "payload": {
+    "files": []
+  },
+  "targets": {},
+  "formats": [
+    "portable"
+  ],
+  "statePolicy": "clean"
+}
