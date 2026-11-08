@@ -1,7 +1,7 @@
-#ifndef UTIL_TEST_SUPPORT_H
-#define UTIL_TEST_SUPPORT_H
+#ifndef VEXC_TEST_SUPPORT_H
+#define VEXC_TEST_SUPPORT_H
 
-// util/test_support.h — the shared vocabulary of the owner suites.
+// test_support.h — the shared vocabulary of the owner suites.
 //
 // Every test that can legitimately decline to run (no loopback port, no
 // enrolled keychain item, no compositor surface) returns B_TEST_SKIP so the

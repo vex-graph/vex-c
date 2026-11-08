@@ -1,9 +1,9 @@
-#ifndef UTIL_THROW_H
-#define UTIL_THROW_H
+#ifndef VEXC_THROW_H
+#define VEXC_THROW_H
 
 #include <stdio.h>
 
-// util/throw.h — the loud-failure macro (the Failure Observability Law).
+// throw.h — the loud-failure macro (the Failure Observability Law).
 //
 // THROW("...") reports a detected COLD rejection: one "[vex]" line to
 // stderr, prefixed with its source location. It never unwinds or exits; the

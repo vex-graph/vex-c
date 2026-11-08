@@ -1,26 +1,27 @@
 {
   "application": {
-    "id": "org.vexgraph.util.types",
-    "name": "types",
-    "displayName": "types",
+    "id": "org.vexgraph.vexc.primitive",
+    "name": "primitive",
+    "displayName": "primitive",
     "version": "0.1.0",
     "type": "cli",
     "authors": [
       "vexgraph"
     ],
     "publisher": "vexgraph",
-    "description": "Width vocabulary: u8..u64, i8..i64, f16/f32/f64, byte",
+    "description": "Primitive width vocabulary: u8..u64, i8..i64, b16/f32/d64",
     "license": "MIT",
     "homepage": "",
     "icon": ""
   },
   "build": {
-    "entry": "types_test.c",
+    "entry": "primitives_test.c",
     "sources": [
-      "types_test.c"
+      "primitives_test.c",
+      "../../lang/primitive.c"
     ],
     "includes": [
-      "util"
+      "../.."
     ],
     "dependencies": [],
     "defines": [],

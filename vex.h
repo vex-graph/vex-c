@@ -1,22 +1,21 @@
-#ifndef UTIL_VEX_H
-#define UTIL_VEX_H
+#ifndef VEXC_VEX_H
+#define VEXC_VEX_H
 
-// util/vex.h — the mandatory vocabulary, in one include.
+// vex.h — the one include of the vex-c floor.
 //
-// This is the floor: every tier includes it downward, and nothing here includes
-// a repo above it. The set is deliberately small — source markers, loud
-// failure, the six-target platform spelling, the constructor dispatcher, the
-// width vocabulary, and the owner-suite skip code. No allocation, no boot, no
-// computation.
+//     #include "vex.h"
 //
-// A production file normally includes the one header it uses; a test that needs
-// the whole vocabulary includes this.
+// No `lib/` prefix and no repository prefix: this directory is an include root,
+// so the door is spelled exactly once. It carries the floor's source markers,
+// loud failure, the six-target platform spelling, constructor dispatch, the scalar
+// vocabulary, and the owner-suite skip code. Nothing here includes a repository
+// above R0, allocates, boots, or computes.
 
-#include "util/annotation.h"
-#include "util/constructor.h"
-#include "util/platform.h"
-#include "util/test_support.h"
-#include "util/throw.h"
-#include "util/types.h"
+#include "lang/annotation.h"
+#include "lang/constructor.h"
+#include "lang/platform.h"
+#include "lang/primitive.h"
+#include "debug/test_support.h"
+#include "debug/throw.h"
 
 #endif

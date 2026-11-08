@@ -1,29 +1,32 @@
 {
   "application": {
-    "id": "org.vexgraph.util",
-    "name": "util",
-    "displayName": "util",
+    "id": "org.vexgraph.vexc",
+    "name": "vex-c",
+    "displayName": "vex-c",
     "version": "0.1.0",
     "type": "lib",
     "authors": [
       "vexgraph"
     ],
     "publisher": "vexgraph",
-    "description": "The zero-dependency floor: annotations, THROW, platform, constructors, widths",
+    "description": "Vex-C (lib): the zero-dependency floor \u2014 primitives, vectors, matrices, annotations, THROW, platform, constructors",
     "license": "MIT",
     "homepage": "",
     "icon": ""
   },
   "build": {
     "entry": "",
-    "sources": [],
+    "sources": [
+      "lang/primitive.c"
+    ],
     "includes": [
-      "util"
+      "."
     ],
     "defines": [],
     "options": [
       "-Wall",
-      "-Wextra"
+      "-Wextra",
+      "-Werror"
     ],
     "link": "static"
   },
