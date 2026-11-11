@@ -18,16 +18,22 @@
     "entry": "primitives_test.c",
     "sources": [
       "primitives_test.c",
-      "../../lang/primitive.c"
+      "../../lang/primitive.c",
+      "../../lang/if64.c",
+      "../../lang/ld128.c",
+      "../../lang/pair_parse.c",
+      "../../vector/vec3.c"
     ],
     "includes": [
-      "../.."
+      ".",
+      "lib"
     ],
     "dependencies": [],
     "defines": [],
     "options": [
       "-Wall",
-      "-Wextra"
+      "-Wextra",
+      "-Werror"
     ],
     "link": "executable"
   },

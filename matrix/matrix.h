@@ -29,12 +29,10 @@
 //     f32   a = mat3f_at(&m, 0, 1);
 //     mat3f_setAt(&m, 2, 2, 7.0f);
 
-#include "../lang/annotation.h"
-#include "../lang/constructor.h"
-#include "../lang/primitive.h"
-#include "../vector/vector.h"
 
 // ---------------------------------------------------------------- mat2
+
+#include "vector/vector.h"
 
 typedef struct mat2f {
     union {
@@ -244,8 +242,8 @@ f32   mat3f_determinant(mat3f a);
 mat3d mat3d_add(mat3d a, mat3d b);
 mat3d mat3d_sub(mat3d a, mat3d b);
 mat3d mat3d_scale(mat3d a, d64 scalar);
-mat3d mat3d_multiply(mat3d a, mat3d b);
-vec3d mat3d_multiplyVec(mat3d a, vec3d v);
+mat3d mat3d_mul(mat3d a, mat3d b);
+vec3d mat3d_mulvec(mat3d a, vec3d v);
 mat3d mat3d_transpose(mat3d a);
 d64   mat3d_determinant(mat3d a);
 

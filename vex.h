@@ -15,14 +15,10 @@
 // boots, or computes.
 //
 // A file that needs only one piece may include that header directly
-// ("throw.h", "primitive.h", "vector.h", "matrix.h", "string.h"); the door is
-// for the whole vocabulary.
+// ("debug/throw.h", "lang/primitive.h", "vector/vector.h", "matrix/matrix.h",
+// "lang/vex_string.h"); the door is for the whole vocabulary.
 
-#include "lang/annotation.h"
-#include "lang/constructor.h"
-#include "lang/platform.h"
-#include "lang/primitive.h"
-#include "lang/string.h"
+#include "lang/lang.h"
 #include "vector/vector.h"
 #include "matrix/matrix.h"
 #include "debug/test_support.h"

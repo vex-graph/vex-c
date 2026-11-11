@@ -24,7 +24,8 @@
       "../../vector/vec4.c"
     ],
     "includes": [
-      "../.."
+      ".",
+      "lib"
     ],
     "dependencies": [],
     "defines": [],

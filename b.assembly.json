@@ -18,7 +18,10 @@
     "entry": "",
     "sources": [
       "lang/primitive.c",
-      "lang/string.c",
+      "lang/if64.c",
+      "lang/ld128.c",
+      "lang/pair_parse.c",
+      "lang/vex_string.c",
       "vector/vec2.c",
       "vector/vec3.c",
       "vector/vec4.c",
@@ -27,7 +30,8 @@
       "matrix/mat4.c"
     ],
     "includes": [
-      "."
+      ".",
+      "lib"
     ],
     "defines": [],
     "options": [

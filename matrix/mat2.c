@@ -3,10 +3,7 @@
 // One shape, two widths, one translation unit. Storage is column-major; every
 // arithmetic function reaches it through the accessors declared in matrix.h.
 
-#include "../lang/annotation.h"
-#include "../lang/primitive.h"
-#include "../vector/vector.h"
-#include "matrix.h"
+#include "matrix/matrix.h"
 
 ;;OVERVIEW
 ;;DEFINITION

@@ -5,7 +5,7 @@
 // Every arithmetic function reaches storage through the accessors declared in
 // matrix.h.
 
-#include "matrix.h"
+#include "matrix/matrix.h"
 
 ;;OVERVIEW
 ;;DEFINITION
@@ -194,7 +194,7 @@ mat3d mat3d_scale(mat3d a, d64 scalar) {
     return out;
 }
 
-mat3d mat3d_multiply(mat3d a, mat3d b) {
+mat3d mat3d_mul(mat3d a, mat3d b) {
     mat3d out = mat3d_0();
     for (u32 col = 0; col < 3; col++) {
         for (u32 row = 0; row < 3; row++) {
@@ -208,7 +208,7 @@ mat3d mat3d_multiply(mat3d a, mat3d b) {
     return out;
 }
 
-vec3d mat3d_multiplyVec(mat3d a, vec3d v) {
+vec3d mat3d_mulvec(mat3d a, vec3d v) {
     return vec3d_3(
         mat3d_at(&a, 0, 0) * vec3d_x(v) + mat3d_at(&a, 0, 1) * vec3d_y(v) + mat3d_at(&a, 0, 2) * vec3d_z(v),
         mat3d_at(&a, 1, 0) * vec3d_x(v) + mat3d_at(&a, 1, 1) * vec3d_y(v) + mat3d_at(&a, 1, 2) * vec3d_z(v),

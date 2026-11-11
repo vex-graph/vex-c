@@ -1,0 +1,44 @@
+{
+  "application": {
+    "id": "org.vexgraph.vexc.string",
+    "name": "string",
+    "displayName": "string",
+    "version": "0.1.0",
+    "type": "cli",
+    "authors": [
+      "vexgraph"
+    ],
+    "publisher": "vexgraph",
+    "description": "Inline stack text: construction, equality, append, clear, projections, overflow refusal",
+    "license": "MIT",
+    "homepage": "",
+    "icon": ""
+  },
+  "build": {
+    "entry": "string_test.c",
+    "sources": [
+      "string_test.c",
+      "../../lang/vex_string.c"
+    ],
+    "includes": [
+      ".",
+      "lib"
+    ],
+    "dependencies": [],
+    "defines": [],
+    "options": [
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "link": "executable"
+  },
+  "payload": {
+    "files": []
+  },
+  "targets": {},
+  "formats": [
+    "portable"
+  ],
+  "statePolicy": "clean"
+}

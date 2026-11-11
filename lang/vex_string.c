@@ -1,13 +1,14 @@
 // string.c — the floor's stack text type.
 //
-// Shallow copy in on construction and append; zeroed on overflow so the caller
-// sees len==0 instead of a silently truncated literal. Cold seams validate; hot
-// reads trust len.
+// Shallow copy in on construction and append; overflow at those cold seams is
+// a loud rejection — THROW plus a zeroed string or false result, never a
+// truncated literal. Hot reads trust len.
 
 #include <stdio.h>
 #include <string.h>
 
-#include "string.h"
+#include "debug/throw.h"
+#include "lang/vex_string.h"
 
 ;;OVERVIEW
 ;;DEFINITION
@@ -23,10 +24,15 @@ string string_0() {
 string string_1(const u8 *bytesIn, bytes length) {
     string out = { 0 };
 
-    if (bytesIn == nullptr || length > STRING_DATA_MAX)
+    if (bytesIn == nullptr)
         return out;
 
-    memcpy(out.data, bytesIn, (size_t) length);
+    if (length > STRING_DATA_MAX) {
+        THROW("string: %zu bytes exceed inline capacity %u", length, STRING_DATA_MAX);
+        return out;
+    }
+
+    memcpy(out.data, bytesIn, length);
     out.len = length;
     return out;
 }
@@ -39,10 +45,12 @@ string string_fromCString(const char *text) {
 
     bytes length = strlen(text);
 
-    if (length > STRING_DATA_MAX)
+    if (length > STRING_DATA_MAX) {
+        THROW("string: %zu bytes exceed inline capacity %u", length, STRING_DATA_MAX);
         return out;
+    }
 
-    memcpy(out.data, text, (size_t) length);
+    memcpy(out.data, text, length);
     out.len = length;
     return out;
 }
@@ -57,7 +65,7 @@ bool string_equals(const string *self, const string *other) {
     if ((*self).len == 0u)
         return true;
 
-    return memcmp((*self).data, (*other).data, (size_t) (*self).len) == 0;
+    return memcmp((*self).data, (*other).data, (bytes) (*self).len) == 0;
 }
 
 bool string_append(string *self, const string *other) {
@@ -66,10 +74,13 @@ bool string_append(string *self, const string *other) {
 
     bytes combined = (*self).len + (*other).len;
 
-    if (combined > STRING_DATA_MAX)
+    if (combined > STRING_DATA_MAX) {
+        THROW("string: append %zu + %zu exceeds inline capacity %u",
+              (*self).len, (*other).len, STRING_DATA_MAX);
         return false;
+    }
 
-    memcpy((*self).data + (*self).len, (*other).data, (size_t) (*other).len);
+    memcpy((*self).data + (*self).len, (*other).data, (*other).len);
     (*self).len = combined;
     return true;
 }
@@ -101,7 +112,7 @@ const u8 *string_data(const string *self) {
     return (*self).data;
 }
 
-void string_toString(const string *self, char *dest, size_t cap, bool *outTruncated) {
+void string_toString(const string *self, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated != nullptr)
         *outTruncated = false;
 
@@ -109,12 +120,16 @@ void string_toString(const string *self, char *dest, size_t cap, bool *outTrunca
         return;
 
     if (self == nullptr) {
-        snprintf(dest, cap, "nullptr");
+        int written = snprintf(dest, cap, "nullptr");
+        if (written < 0 || (bytes) written >= cap) {
+            if (outTruncated != nullptr)
+                *outTruncated = true;
+        }
         return;
     }
 
-    size_t n = (size_t) (*self).len;
-    size_t take = n < cap - 1u ? n : cap - 1u;
+    bytes n = (*self).len;
+    bytes take = n < cap - 1u ? n : cap - 1u;
     memcpy(dest, (*self).data, take);
     dest[take] = '\0';
 
@@ -122,7 +137,7 @@ void string_toString(const string *self, char *dest, size_t cap, bool *outTrunca
         *outTruncated = true;
 }
 
-void string_toStringStruct(const string *self, char *dest, size_t cap, bool *outTruncated) {
+void string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated != nullptr)
         *outTruncated = false;
 
@@ -130,19 +145,23 @@ void string_toStringStruct(const string *self, char *dest, size_t cap, bool *out
         return;
 
     if (self == nullptr) {
-        snprintf(dest, cap, "nullptr");
+        int written = snprintf(dest, cap, "nullptr");
+        if (written < 0 || (bytes) written >= cap) {
+            if (outTruncated != nullptr)
+                *outTruncated = true;
+        }
         return;
     }
 
     char body[STRING_DATA_BYTES + 1u];
-    size_t n = (size_t) (*self).len;
+    bytes n = (*self).len;
 
     memcpy(body, (*self).data, n);
     body[n] = '\0';
 
     int written = snprintf(dest, cap, "string { data=\"%s\", len=%zu }", body, n);
 
-    if (written < 0 || (size_t) written >= cap) {
+    if (written < 0 || (bytes) written >= cap) {
         if (outTruncated != nullptr)
             *outTruncated = true;
     }

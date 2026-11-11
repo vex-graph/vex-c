@@ -5,7 +5,7 @@
 // place for function bodies. bfloat16 is a storage format: the arithmetic
 // surface widens to f32 first.
 
-#include "primitive.h"
+#include "lang/primitive.h"
 
 ;;OVERVIEW
 ;;DEFINITION

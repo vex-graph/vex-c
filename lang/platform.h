@@ -30,7 +30,9 @@
 // Capability Gating Law). A compile-time branch chooses the body; a capability
 // bit chooses the feature inside it.
 
-#if defined(__APPLE__) && (defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64))
+#if (defined(__APPLE__) + defined(_WIN32) + defined(__linux__)) > 1
+    #error "platform.h: more than one platform family is defined; the floor ships exactly one"
+#elif defined(__APPLE__) && (defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64))
     #define VEX_PLATFORM_APPLE_SILICON 1
     #define VEX_TARGET_NAME "darwin-arm64"
 #elif defined(__APPLE__) && (defined(__x86_64__) || defined(_M_X64))
@@ -50,8 +52,6 @@
     #define VEX_TARGET_NAME "windows-x86_64"
 #elif defined(__i386__) || defined(_M_IX86) || defined(__arm__) || defined(_M_ARM)
     #error "platform.h: 32-bit x86/arm is outside the six-target floor; every supported target is 64-bit"
-#elif (defined(__APPLE__) + defined(_WIN32) + defined(__linux__)) > 1
-    #error "platform.h: more than one platform family is defined; the floor ships exactly one"
 #else
     #error "platform.h: no branch for this target; the floor is darwin/linux/windows on arm64/x86_64"
 #endif
@@ -93,7 +93,7 @@
 #endif
 
 // The floor is 64-bit on every target. A 32-bit build would change pointer and
-// size_t widths under the same names, so it is refused above and asserted here.
+// bytes widths under the same names, so it is refused above and asserted here.
 #define VEX_ARCH_BITS 64
 _Static_assert(sizeof(void*) * 8 == VEX_ARCH_BITS, "platform.h: the platform floor is 64-bit only");
 

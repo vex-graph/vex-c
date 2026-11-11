@@ -23,17 +23,17 @@ floor by including its headers under their own bare names.
 
 A file that needs one piece may include that header directly (`"lang/primitive.h"`,
 `"vector/vector.h"`, `"matrix/matrix.h"`, `"lang/platform.h"`,
-`"lang/string.h"`); the door is for the whole vocabulary.
+`"lang/vex_string.h"`); the door is for the whole vocabulary.
 
 ## Headers
 
 | Header | Owns |
 | :--- | :--- |
-| `lang/annotation.h` | every `;;MARKER` the Two-Semicolon Annotation Style Law names |
+| `annotation.h` | every `;;MARKER` the Two-Semicolon Annotation Style Law names |
 | `lang/constructor.h` | arity-based `Class(...)` dispatch |
 | `lang/platform.h` | the six canonical platform targets and their coarse axes |
-| `lang/primitive.h` | `u8`..`i64`, `bytes` (`size_t`), `b16`, `f32`/`d64`, gated `u128` |
-| `lang/string.h` | the 24-byte inline text type (`string`) and `chr("...")` |
+| `lang/primitive.h` | `u8`..`i64`, `bytes` (`bytes`), `b16`, `f32`/`d64`, gated `u128` |
+| `lang/vex_string.h` | the 24-byte inline text type (`string`) and `chr("...")` |
 | `vector/vector.h` | `vec2`/`vec3`/`vec4` at `b16`/`f32`/`d64`, accessors, constructors, arithmetic |
 | `matrix/matrix.h` | `mat2`/`mat3`/`mat4` at `f32`/`d64`, accessors, constructors, arithmetic |
 | `debug/test_support.h` | `B_TEST_SKIP` (77) for owner suites |
@@ -132,20 +132,23 @@ it is. `vexspoke` is R2 CPU behavior and is a different owner.
 
 ## Current State
 
-- Ten public headers plus the `vex.h` door, and eight translation units
+- Nine public headers plus the `vex.h` door, and eight translation units
   (`lang/primitive.c`, `lang/string.c`, `vector/vec2.c`, `vector/vec3.c`,
   `vector/vec4.c`, `matrix/mat2.c`, `matrix/mat3.c`, `matrix/mat4.c`).
   Headers carry types, layout assertions and declarations; every function body
   lives in the `.c` for its shape.
 - `test/primitive` proves the scalar widths and the bfloat16 conversion;
   `test/vector` proves the vector layouts, accessors and arithmetic;
-  `test/matrix` proves the matrix composition and arithmetic. All three pass
-  with `cc -std=gnu23 -Wall -Wextra -Werror` on macOS arm64.
+  `test/matrix` proves the matrix composition and arithmetic; `test/string`
+  proves construction, equality, append, clear, both projections and the loud
+  overflow refusal. All four pass with
+  `cc -std=gnu23 -Wall -Wextra -Werror` on macOS arm64.
 - `.clangd` states that this tree is C23: without it, clangd falls back to
   Objective-C++, where `alignas` on an anonymous union member is ignored and
   the layout assertions report false failures.
-- `lang/string.h` is the inline text vocabulary (`string`, `chr("...")`).
-  Projections still arrive with the toString owner.
+- `lang/vex_string.h` is the inline text vocabulary (`string`, `chr("...")`);
+  it ships both `toString` and `toStringStruct`. The vector and matrix
+  projections remain deferred.
 
 ## Scope and Limitations
 

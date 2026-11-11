@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-#include "vector.h"
+#include "vector/vector.h"
 
 ;;OVERVIEW
 ;;DEFINITION
@@ -17,7 +17,7 @@
 b16 vec2b_x(const vec2b self) { return self.x; }
 
 ;;SETTER
-void vec2b_setX(vec2b *self, const b16 value) { (*self).x = value; }
+void vec2b_setX(vec2b *self, b16 value) { (*self).x = value; }
 
 ;;GETTER
 b16 vec2b_y(vec2b self) { return self.y; }

@@ -9,14 +9,17 @@
 // Usage: `#include "vex.h"` then `;;OVERVIEW`, `;;DEFINITION`, etc.
 //
 // `;;VALIDATOR` marks a surface that exists to interrogate state — the C
-// companion to a graphics validation layer. It is not `;;VALIDATOR`: that name is
+// companion to a graphics validation layer. It is not `;;DEBUG`: that name is
 // unusable because platform headers test `#if DEBUG`.
 //
-// Rust mirror: relational-engine/rust/annotations/lib.rs. Same fourteen markers,
-// same arity, `#[overview]` for `;;OVERVIEW` and so on. `;;TEST` equates to
-// Rust's built-in `#[test]`, which cannot be shadowed by a proc macro.
+// Rust mirror: relational-engine/rust/annotations/lib.rs carries the fifteen
+// shared markers with the same arity (`#[overview]` for `;;OVERVIEW`, and so
+// on). C additionally owns CLASSNAME, DECONSTRUCT, FINAL and WIDGET_LAYERS,
+// which have no Rust spelling. `;;TEST` equates to Rust's built-in `#[test]`,
+// which cannot be shadowed by a proc macro.
 
 #define CHECKER                         _Static_assert(1, "@Checker");
+#define CLASSNAME(class_)               _Static_assert(1, "@ClassName(" class_ ")");
 #define DECONSTRUCT                     _Static_assert(1, "@Deconstruct");
 #define DEFINITION                      _Static_assert(1, "@Definition");
 #define DRAFT                           _Static_assert(1, "@Draft");
@@ -32,6 +35,6 @@
 #define TEST                            _Static_assert(1, "@Test");
 #define VALIDATOR                       _Static_assert(1, "@Validator");
 #define WHAT(variable)                  _Static_assert(1, "@What(" variable ")");
-#define WIDGET_LAYERS                   _Static_assert(1, "@WidgetLayers(" text ")"); // darling exclusive btw... this is part of the overview where it tells us the rendering layers for each widget
+#define WIDGET_LAYERS                   _Static_assert(1, "@WidgetLayers"); // darling exclusive btw... this is part of the overview where it tells us the rendering layers for each widget
 
 #endif

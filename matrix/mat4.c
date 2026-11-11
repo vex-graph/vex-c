@@ -5,6 +5,7 @@
 // other matrix matches.
 
 #include "matrix.h"
+#include "vex.h"
 
 ;;OVERVIEW
 ;;DEFINITION

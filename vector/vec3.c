@@ -5,7 +5,7 @@
 
 #include <math.h>
 
-#include "vector.h"
+#include "vector/vector.h"
 
 ;;OVERVIEW
 ;;DEFINITION
