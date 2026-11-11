@@ -10,9 +10,6 @@
 // `chr("hello")` copies into this struct on the stack; overflow is refused loudly
 // (the Cold-Strict, Hot-Minimal Validation Law), never truncated.
 
-#include <stdbool.h>
-#include <stddef.h>
-
 #include "annotation.h"
 #include "constructor.h"
 #include "primitive.h"

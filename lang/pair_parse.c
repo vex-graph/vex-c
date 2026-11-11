@@ -1,7 +1,5 @@
+#include "vex.h"
 #include "pair_parse.h"
-
-#include <math.h>
-#include <string.h>
 
 ;;DEFINITION
 ;;OVERVIEW

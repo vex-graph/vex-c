@@ -4,9 +4,7 @@
 // a loud rejection — THROW plus a zeroed string or false result, never a
 // truncated literal. Hot reads trust len.
 
-#include <stdio.h>
-#include <string.h>
-
+#include "vex.h"
 #include "debug/throw.h"
 #include "lang/vex_string.h"
 

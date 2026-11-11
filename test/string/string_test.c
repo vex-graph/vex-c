@@ -6,9 +6,6 @@
 // stderr. The test asserts the safe results; the diagnostic lines are emitted
 // by the code under test and are not captured here.
 
-#include <stdio.h>
-#include <string.h>
-
 #include "vex.h"
 
 static int failures;

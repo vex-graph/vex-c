@@ -3,6 +3,7 @@
 // One shape, two widths, one translation unit. Storage is column-major; every
 // arithmetic function reaches it through the accessors declared in matrix.h.
 
+#include "vex.h"
 #include "matrix/matrix.h"
 
 ;;OVERVIEW

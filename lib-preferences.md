@@ -37,7 +37,7 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 * `lib/` is an include root, so the spelling never carries `lib/`, `vex/`, or a relative hop.
 * `vex.h` is the one door: it includes the floor's headers by bare names (`"lang/primitive.h"`, `"lang/vex_string.h"`, `"annotation.h"`).
 * A consumer needs no second include for the floor.
-* A file that genuinely needs one piece may spell that header directly (`"lang/primitive.h"`, `"lang/platform.h"`).
+* No file includes a system header itself; `vex.h` batches them all, and a floor implementation file may add only its own internal headers after the door.
 * Two spellings of the same header are a defect.
 
 ### Primitive Vocabulary Law

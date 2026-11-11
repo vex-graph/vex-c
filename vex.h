@@ -14,9 +14,19 @@
 // owner-suite skip code. Nothing here includes a repository above R0, allocates,
 // boots, or computes.
 //
-// A file that needs only one piece may include that header directly
-// ("debug/throw.h", "lang/primitive.h", "vector/vector.h", "matrix/matrix.h",
-// "lang/vex_string.h"); the door is for the whole vocabulary.
+// Every source file includes this door first and nothing system-level itself:
+// the door batches the whole standard system surface the floor uses. A floor
+// implementation file may add its own internal headers after the door.
+
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdalign.h>
+#include <stdatomic.h>
+#include <inttypes.h>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "lang/lang.h"
 #include "vector/vector.h"

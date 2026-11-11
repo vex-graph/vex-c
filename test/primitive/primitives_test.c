@@ -4,10 +4,6 @@
 // translation unit does not compile. The runtime body exists only so the test
 // unit has an entry point and prints what it proved.
 
-#include <math.h>
-#include <stdatomic.h>
-#include <stdio.h>
-
 #include "vex.h"
 
 _Static_assert(sizeof(u8) == 1, "u8 must be 8 bits");

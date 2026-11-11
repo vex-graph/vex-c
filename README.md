@@ -21,9 +21,8 @@ inventing a second spelling of it.
 No `lib/vex.h`, no `vex/lib/vex.h`, no relative hop. `vex.h` carries the whole
 floor by including its headers under their own bare names.
 
-A file that needs one piece may include that header directly (`"lang/primitive.h"`,
-`"vector/vector.h"`, `"matrix/matrix.h"`, `"lang/platform.h"`,
-`"lang/vex_string.h"`); the door is for the whole vocabulary.
+Every file includes the door and nothing system-level itself; the door batches
+the whole standard system surface the floor uses.
 
 ## Headers
 

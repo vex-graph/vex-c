@@ -1,8 +1,6 @@
 #ifndef VEXC_THROW_H
 #define VEXC_THROW_H
 
-#include <stdio.h>
-
 // throw.h — the loud-failure macro (the Failure Observability Law).
 //
 // THROW("...") reports a detected COLD rejection: one "[vex]" line to

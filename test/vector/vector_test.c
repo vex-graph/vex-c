@@ -4,9 +4,6 @@
 // below); behaviour is proven at run time through the accessor surface only, so
 // the test is also the proof that a consumer never needs `(*ptr).field`.
 
-#include <math.h>
-#include <stdio.h>
-
 #include "vex.h"
 
 _Static_assert(sizeof(vec3b) == 4 * sizeof(b16), "vec3b is four b16 lanes");

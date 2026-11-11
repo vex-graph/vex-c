@@ -8,9 +8,6 @@
 // vector_test, so the size and alignment assertions below are the composition
 // law, not a second geometry rule.
 
-#include <math.h>
-#include <stdio.h>
-
 #include "vex.h"
 
 _Static_assert(sizeof(mat2f) == 2 * sizeof(vec2f), "mat2f is two vec2f columns");

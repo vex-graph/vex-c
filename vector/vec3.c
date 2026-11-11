@@ -3,8 +3,7 @@
 // One shape, three widths, one translation unit. A vec3 carries a zeroed fourth
 // lane; the constructors start from the zeroed value, so the lane stays zero.
 
-#include <math.h>
-
+#include "vex.h"
 #include "vector/vector.h"
 
 ;;OVERVIEW

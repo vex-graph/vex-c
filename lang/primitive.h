@@ -12,9 +12,6 @@
 // the other two math headers: vector.h owns vec2/vec3/vec4 and matrix.h owns
 // mat2/mat3/mat4, in the same widths.
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include "annotation.h"
 #include "constructor.h"
 

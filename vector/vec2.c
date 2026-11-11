@@ -4,8 +4,7 @@
 // arithmetic, the b16 bridge and the cold text projection all live here;
 // vector.h declares them and owns the layout.
 
-#include <math.h>
-
+#include "vex.h"
 #include "vector/vector.h"
 
 ;;OVERVIEW

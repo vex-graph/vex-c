@@ -3,8 +3,7 @@
 // One shape, three widths, one translation unit. A vec4 is the storage shape
 // every other vector matches: vec3 differs only by pinning the fourth lane.
 
-#include <math.h>
-
+#include "vex.h"
 #include "vector/vector.h"
 
 ;;OVERVIEW

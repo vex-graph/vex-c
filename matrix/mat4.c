@@ -4,8 +4,8 @@
 // flat data stride is four lanes and the storage is the plain 4x4 case every
 // other matrix matches.
 
-#include "matrix.h"
 #include "vex.h"
+#include "matrix.h"
 
 ;;OVERVIEW
 ;;DEFINITION

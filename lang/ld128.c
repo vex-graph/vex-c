@@ -1,9 +1,5 @@
+#include "vex.h"
 #include "primitive.h"
-
-#include <inttypes.h>
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "debug/throw.h"
 #include "pair_parse.h"

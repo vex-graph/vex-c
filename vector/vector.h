@@ -39,8 +39,6 @@
 // `data[]` is the deliberate SIMD seam and is the one member not reached
 // through an accessor.
 
-#include <stdalign.h>
-
 #include "lang/primitive.h"
 
 // ---------------------------------------------------------------- vec2

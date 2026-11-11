@@ -5,6 +5,7 @@
 // Every arithmetic function reaches storage through the accessors declared in
 // matrix.h.
 
+#include "vex.h"
 #include "matrix/matrix.h"
 
 ;;OVERVIEW
