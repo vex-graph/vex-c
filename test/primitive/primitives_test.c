@@ -5,6 +5,7 @@
 // unit has an entry point and prints what it proved.
 
 #include <math.h>
+#include <stdatomic.h>
 #include <stdio.h>
 
 #include "vex.h"
