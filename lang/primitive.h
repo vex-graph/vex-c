@@ -33,11 +33,22 @@ typedef uintptr_t    pointer;
 // any generic
 typedef void*        any;
 
+// const any generic: the pointer moves, the bytes behind it do not. `const any`
+// is `void *const` — a const pointer — and a qualifier on a parameter is
+// discarded by the language, so it promises nothing about the data.
+typedef const void*  const_any;
+
+// function named as is: the return spelling of a function that returns nothing,
+// so a declaration reads as what it is. `void` keeps its one other job, the
+// `(void) value;` discard.
+typedef void         fn;
+
 // any function
 typedef any          (*func)(any);
 
 _Static_assert(sizeof(pointer) * 8 == VEX_ARCH_BITS,    "pointer must be one 64-bit word on the six-target floor");
 _Static_assert(sizeof(any) * 8 == VEX_ARCH_BITS,        "any must be one 64-bit word on the six-target floor");
+_Static_assert(sizeof(const_any) * 8 == VEX_ARCH_BITS,  "const_any must be one 64-bit word on the six-target floor");
 
 // `bytes` is the type `sizeof` yields — the one spelling for an object size:
 //
