@@ -93,8 +93,8 @@
 #endif
 
 // The floor is 64-bit on every target. A 32-bit build would change pointer and
-// bytes widths under the same names, so it is refused above and asserted here.
+// bytes widths under the same names, so it is refused above; primitive.h, which
+// owns the pointer and bytes spellings, asserts the width against this floor.
 #define VEX_ARCH_BITS 64
-_Static_assert(sizeof(void*) * 8 == VEX_ARCH_BITS, "platform.h: the platform floor is 64-bit only");
 
 #endif

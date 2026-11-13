@@ -12,11 +12,14 @@
 // the other two math headers: vector.h owns vec2/vec3/vec4 and matrix.h owns
 // mat2/mat3/mat4, in the same widths.
 
+#include <tgmath.h>
+
 #include "annotation.h"
 #include "constructor.h"
+#include "lang/platform.h"
 
-typedef uint8_t       u8;
-typedef int8_t        i8;
+typedef uint8_t      u8;
+typedef int8_t       i8;
 typedef uint16_t     u16;
 typedef int16_t      i16;
 typedef uint32_t     u32;
@@ -26,6 +29,15 @@ typedef int64_t      i64;
 
 // pointer (32-bit | 64-bit based)
 typedef uintptr_t    pointer;
+
+// any generic
+typedef void*        any;
+
+// any function
+typedef any          (*func)(any);
+
+_Static_assert(sizeof(pointer) * 8 == VEX_ARCH_BITS,    "pointer must be one 64-bit word on the six-target floor");
+_Static_assert(sizeof(any) * 8 == VEX_ARCH_BITS,        "any must be one 64-bit word on the six-target floor");
 
 // `bytes` is the type `sizeof` yields — the one spelling for an object size:
 //
@@ -77,11 +89,11 @@ typedef _Atomic u64 au64;
 typedef _Atomic f32 af32;
 typedef _Atomic d64 ad64;
 
-_Static_assert(sizeof(ai8) == 1, "ai8 must be one 8-bit word");
+_Static_assert(sizeof(ai8)  == 1, "ai8 must be one 8-bit word");
 _Static_assert(sizeof(ai16) == 2, "ai16 must be one 16-bit word");
 _Static_assert(sizeof(ai32) == 4, "ai32 must be one 32-bit word");
 _Static_assert(sizeof(ai64) == 8, "ai64 must be one 64-bit word");
-_Static_assert(sizeof(au8) == 1, "au8 must be one 8-bit word");
+_Static_assert(sizeof(au8)  == 1, "au8 must be one 8-bit word");
 _Static_assert(sizeof(au16) == 2, "au16 must be one 16-bit word");
 _Static_assert(sizeof(au32) == 4, "au32 must be one 32-bit word");
 _Static_assert(sizeof(au64) == 8, "au64 must be one 64-bit word");
