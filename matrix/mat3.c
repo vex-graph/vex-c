@@ -20,7 +20,7 @@ f32 mat3f_at(const mat3f *self, u32 row, u32 col) {
 }
 
 ;;SETTER
-void mat3f_setAt(mat3f *self, u32 row, u32 col, f32 value) {
+fn mat3f_setAt(mat3f *self, u32 row, u32 col, f32 value) {
     vec3f column = (*self).col[col];
     column.data[row] = value;
     (*self).col[col] = column;
@@ -30,7 +30,7 @@ void mat3f_setAt(mat3f *self, u32 row, u32 col, f32 value) {
 vec3f mat3f_col(const mat3f *self, u32 col) { return (*self).col[col]; }
 
 ;;SETTER
-void mat3f_setCol(mat3f *self, u32 col, vec3f value) { (*self).col[col] = value; }
+fn mat3f_setCol(mat3f *self, u32 col, vec3f value) { (*self).col[col] = value; }
 
 ;;GETTER
 d64 mat3d_at(const mat3d *self, u32 row, u32 col) {
@@ -39,7 +39,7 @@ d64 mat3d_at(const mat3d *self, u32 row, u32 col) {
 }
 
 ;;SETTER
-void mat3d_setAt(mat3d *self, u32 row, u32 col, d64 value) {
+fn mat3d_setAt(mat3d *self, u32 row, u32 col, d64 value) {
     vec3d column = (*self).col[col];
     column.data[row] = value;
     (*self).col[col] = column;
@@ -49,7 +49,7 @@ void mat3d_setAt(mat3d *self, u32 row, u32 col, d64 value) {
 vec3d mat3d_col(const mat3d *self, u32 col) { return (*self).col[col]; }
 
 ;;SETTER
-void mat3d_setCol(mat3d *self, u32 col, vec3d value) { (*self).col[col] = value; }
+fn mat3d_setCol(mat3d *self, u32 col, vec3d value) { (*self).col[col] = value; }
 
 // ---------------------------------------------------------------- constructors
 

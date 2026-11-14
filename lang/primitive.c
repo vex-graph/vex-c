@@ -15,7 +15,7 @@
 u16 b16_bits(b16 self) { return self.bits; }
 
 ;;SETTER
-void b16_setBits(b16 *self, u16 value) { (*self).bits = value; }
+fn b16_setBits(b16 *self, u16 value) { (*self).bits = value; }
 
 b16 b16_from_f32(f32 value) {
     union { f32 as_f32; u32 as_u32; } pun = { .as_f32 = value };

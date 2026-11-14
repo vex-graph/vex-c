@@ -8,6 +8,8 @@
 // vector_test, so the size and alignment assertions below are the composition
 // law, not a second geometry rule.
 
+
+
 #include "vex.h"
 
 _Static_assert(sizeof(mat2f) == 2 * sizeof(vec2f), "mat2f is two vec2f columns");
@@ -23,7 +25,7 @@ _Static_assert(_Alignof(mat4d) == 32, "mat4d columns are 256-bit, 32-aligned");
 
 static int failures;
 
-static void check(int ok, const char *what) {
+static fn check(int ok, const char *what) {
     if (ok) return;
     fprintf(stderr, "matrix_test: FAIL %s\n", what);
     failures++;

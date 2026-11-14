@@ -15,55 +15,55 @@
 b16 vec3b_x(vec3b self) { return self.x; }
 
 ;;SETTER
-void vec3b_setX(vec3b *self, b16 value) { (*self).x = value; }
+fn vec3b_setX(vec3b *self, b16 value) { (*self).x = value; }
 
 ;;GETTER
 b16 vec3b_y(vec3b self) { return self.y; }
 
 ;;SETTER
-void vec3b_setY(vec3b *self, b16 value) { (*self).y = value; }
+fn vec3b_setY(vec3b *self, b16 value) { (*self).y = value; }
 
 ;;GETTER
 b16 vec3b_z(vec3b self) { return self.z; }
 
 ;;SETTER
-void vec3b_setZ(vec3b *self, b16 value) { (*self).z = value; }
+fn vec3b_setZ(vec3b *self, b16 value) { (*self).z = value; }
 
 ;;GETTER
 f32 vec3f_x(vec3f self) { return self.x; }
 
 ;;SETTER
-void vec3f_setX(vec3f *self, f32 value) { (*self).x = value; }
+fn vec3f_setX(vec3f *self, f32 value) { (*self).x = value; }
 
 ;;GETTER
 f32 vec3f_y(vec3f self) { return self.y; }
 
 ;;SETTER
-void vec3f_setY(vec3f *self, f32 value) { (*self).y = value; }
+fn vec3f_setY(vec3f *self, f32 value) { (*self).y = value; }
 
 ;;GETTER
 f32 vec3f_z(vec3f self) { return self.z; }
 
 ;;SETTER
-void vec3f_setZ(vec3f *self, f32 value) { (*self).z = value; }
+fn vec3f_setZ(vec3f *self, f32 value) { (*self).z = value; }
 
 ;;GETTER
 d64 vec3d_x(vec3d self) { return self.x; }
 
 ;;SETTER
-void vec3d_setX(vec3d *self, d64 value) { (*self).x = value; }
+fn vec3d_setX(vec3d *self, d64 value) { (*self).x = value; }
 
 ;;GETTER
 d64 vec3d_y(vec3d self) { return self.y; }
 
 ;;SETTER
-void vec3d_setY(vec3d *self, d64 value) { (*self).y = value; }
+fn vec3d_setY(vec3d *self, d64 value) { (*self).y = value; }
 
 ;;GETTER
 d64 vec3d_z(vec3d self) { return self.z; }
 
 ;;SETTER
-void vec3d_setZ(vec3d *self, d64 value) { (*self).z = value; }
+fn vec3d_setZ(vec3d *self, d64 value) { (*self).z = value; }
 
 // ---------------------------------------------------------------- constructors
 

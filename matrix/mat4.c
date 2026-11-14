@@ -19,7 +19,7 @@ f32 mat4f_at(const mat4f *self, u32 row, u32 col) {
 }
 
 ;;SETTER
-void mat4f_setAt(mat4f *self, u32 row, u32 col, f32 value) {
+fn mat4f_setAt(mat4f *self, u32 row, u32 col, f32 value) {
     vec4f column = (*self).col[col];
     column.data[row] = value;
     (*self).col[col] = column;
@@ -29,7 +29,7 @@ void mat4f_setAt(mat4f *self, u32 row, u32 col, f32 value) {
 vec4f mat4f_col(const mat4f *self, u32 col) { return (*self).col[col]; }
 
 ;;SETTER
-void mat4f_setCol(mat4f *self, u32 col, vec4f value) { (*self).col[col] = value; }
+fn mat4f_setCol(mat4f *self, u32 col, vec4f value) { (*self).col[col] = value; }
 
 ;;GETTER
 d64 mat4d_at(const mat4d *self, u32 row, u32 col) {
@@ -38,7 +38,7 @@ d64 mat4d_at(const mat4d *self, u32 row, u32 col) {
 }
 
 ;;SETTER
-void mat4d_setAt(mat4d *self, u32 row, u32 col, d64 value) {
+fn mat4d_setAt(mat4d *self, u32 row, u32 col, d64 value) {
     vec4d column = (*self).col[col];
     column.data[row] = value;
     (*self).col[col] = column;
@@ -48,7 +48,7 @@ void mat4d_setAt(mat4d *self, u32 row, u32 col, d64 value) {
 vec4d mat4d_col(const mat4d *self, u32 col) { return (*self).col[col]; }
 
 ;;SETTER
-void mat4d_setCol(mat4d *self, u32 col, vec4d value) { (*self).col[col] = value; }
+fn mat4d_setCol(mat4d *self, u32 col, vec4d value) { (*self).col[col] = value; }
 
 // ---------------------------------------------------------------- constructors
 

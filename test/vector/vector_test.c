@@ -4,6 +4,8 @@
 // below); behaviour is proven at run time through the accessor surface only, so
 // the test is also the proof that a consumer never needs `(*ptr).field`.
 
+
+
 #include "vex.h"
 
 _Static_assert(sizeof(vec3b) == 4 * sizeof(b16), "vec3b is four b16 lanes");
@@ -18,7 +20,7 @@ _Static_assert(_Alignof(vec4f) == 16, "vec4f is a 128-bit value");
 
 static int failures;
 
-static void check(int ok, const char *what) {
+static fn check(int ok, const char *what) {
     if (ok) return;
     fprintf(stderr, "vector_test: FAIL %s\n", what);
     failures++;

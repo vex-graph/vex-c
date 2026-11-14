@@ -39,12 +39,12 @@ typedef void*        any;
 typedef const void*  const_any;
 
 // function named as is: the return spelling of a function that returns nothing,
-// so a declaration reads as what it is. `void` keeps its one other job, the
-// `(void) value;` discard.
+// so a declaration reads as what it is. `fn` keeps its one other job, the
+// `(fn) value;` discard.
 typedef void         fn;
 
 // any function
-typedef any          (*func)(any);
+typedef any          (*fnptr)(any);
 
 _Static_assert(sizeof(pointer) * 8 == VEX_ARCH_BITS,    "pointer must be one 64-bit word on the six-target floor");
 _Static_assert(sizeof(any) * 8 == VEX_ARCH_BITS,        "any must be one 64-bit word on the six-target floor");
@@ -134,7 +134,7 @@ typedef struct b16 { u16 bits; } b16;
 u16 b16_bits(b16 self);
 
 ;;SETTER
-void b16_setBits(b16 *self, u16 value);
+fn b16_setBits(b16 *self, u16 value);
 
 b16 b16_from_f32(f32 value);
 f32 b16_to_f32(b16 value);
@@ -203,14 +203,14 @@ i32 if64_integer(if64 self);
 f32 if64_fraction(if64 self);
 
 ;;SETTER
-void if64_setInteger(if64 *self, i32 value);
+fn if64_setInteger(if64 *self, i32 value);
 
 ;;SETTER
-void if64_setFraction(if64 *self, f32 value);
+fn if64_setFraction(if64 *self, f32 value);
 
 f32 if64_toF32(if64 value);
-void if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated);
-void if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated);
+fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated);
+fn if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated);
 
 ld128 ld128_0();
 ld128 ld128_1(const char *text);
@@ -224,14 +224,14 @@ i64 ld128_integer(ld128 self);
 d64 ld128_fraction(ld128 self);
 
 ;;SETTER
-void ld128_setInteger(ld128 *self, i64 value);
+fn ld128_setInteger(ld128 *self, i64 value);
 
 ;;SETTER
-void ld128_setFraction(ld128 *self, d64 value);
+fn ld128_setFraction(ld128 *self, d64 value);
 
 d64 ld128_toD64(ld128 value);
-void ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
-void ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
+fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
+fn ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
 
 
 // 128-bit widths are not in the six-target floor — MSVC has no __int128, and

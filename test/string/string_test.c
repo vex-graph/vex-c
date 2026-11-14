@@ -6,17 +6,19 @@
 // stderr. The test asserts the safe results; the diagnostic lines are emitted
 // by the code under test and are not captured here.
 
+
+
 #include "vex.h"
 
 static int failures;
 
-static void check(int ok, const char *what) {
+static fn check(int ok, const char *what) {
     if (ok) return;
     fprintf(stderr, "string_test: FAIL %s\n", what);
     failures++;
 }
 
-int main(void) {
+int main() {
     // Empty construction, including the zero-argument dispatch.
     string empty = string();
     check(string_len(&empty) == 0, "string() is empty");

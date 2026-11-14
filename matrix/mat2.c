@@ -18,7 +18,7 @@ f32 mat2f_at(const mat2f *self, u32 row, u32 col) {
 }
 
 ;;SETTER
-void mat2f_setAt(mat2f *self, u32 row, u32 col, f32 value) {
+fn mat2f_setAt(mat2f *self, u32 row, u32 col, f32 value) {
     vec2f column = (*self).col[col];
     column.data[row] = value;
     (*self).col[col] = column;
@@ -28,7 +28,7 @@ void mat2f_setAt(mat2f *self, u32 row, u32 col, f32 value) {
 vec2f mat2f_col(const mat2f *self, u32 col) { return (*self).col[col]; }
 
 ;;SETTER
-void mat2f_setCol(mat2f *self, u32 col, vec2f value) { (*self).col[col] = value; }
+fn mat2f_setCol(mat2f *self, u32 col, vec2f value) { (*self).col[col] = value; }
 
 ;;GETTER
 d64 mat2d_at(const mat2d *self, u32 row, u32 col) {
@@ -37,7 +37,7 @@ d64 mat2d_at(const mat2d *self, u32 row, u32 col) {
 }
 
 ;;SETTER
-void mat2d_setAt(mat2d *self, u32 row, u32 col, d64 value) {
+fn mat2d_setAt(mat2d *self, u32 row, u32 col, d64 value) {
     vec2d column = (*self).col[col];
     column.data[row] = value;
     (*self).col[col] = column;
@@ -47,7 +47,7 @@ void mat2d_setAt(mat2d *self, u32 row, u32 col, d64 value) {
 vec2d mat2d_col(const mat2d *self, u32 col) { return (*self).col[col]; }
 
 ;;SETTER
-void mat2d_setCol(mat2d *self, u32 col, vec2d value) { (*self).col[col] = value; }
+fn mat2d_setCol(mat2d *self, u32 col, vec2d value) { (*self).col[col] = value; }
 
 // ---------------------------------------------------------------- constructors
 

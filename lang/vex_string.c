@@ -11,7 +11,7 @@
 ;;OVERVIEW
 ;;DEFINITION
 
-static void zeroString(string *self) {
+static fn zeroString(string *self) {
     memset(self, 0, sizeof(*self));
 }
 
@@ -83,7 +83,7 @@ bool string_append(string *self, const string *other) {
     return true;
 }
 
-void string_clear(string *self) {
+fn string_clear(string *self) {
     if (self == nullptr)
         return;
 
@@ -110,7 +110,7 @@ const u8 *string_data(const string *self) {
     return (*self).data;
 }
 
-void string_toString(const string *self, char *dest, bytes cap, bool *outTruncated) {
+fn string_toString(const string *self, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated != nullptr)
         *outTruncated = false;
 
@@ -135,7 +135,7 @@ void string_toString(const string *self, char *dest, bytes cap, bool *outTruncat
         *outTruncated = true;
 }
 
-void string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTruncated) {
+fn string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated != nullptr)
         *outTruncated = false;
 

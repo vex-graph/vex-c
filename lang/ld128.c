@@ -18,12 +18,12 @@ d64 ld128_fraction(ld128 self) {
 }
 
 ;;SETTER
-void ld128_setInteger(ld128 *self, i64 value) {
+fn ld128_setInteger(ld128 *self, i64 value) {
     (*self).integer = value;
 }
 
 ;;SETTER
-void ld128_setFraction(ld128 *self, d64 value) {
+fn ld128_setFraction(ld128 *self, d64 value) {
     (*self).fraction = value;
 }
 
@@ -64,7 +64,7 @@ d64 ld128_toD64(ld128 value) {
     return (d64) ld128_integer(value) + ld128_fraction(value);
 }
 
-void ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
+fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)
@@ -81,7 +81,7 @@ void ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncate
     }
 }
 
-void ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
+fn ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)

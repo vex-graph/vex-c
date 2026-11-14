@@ -15,73 +15,73 @@
 b16 vec4b_x(vec4b self) { return self.x; }
 
 ;;SETTER
-void vec4b_setX(vec4b *self, b16 value) { (*self).x = value; }
+fn vec4b_setX(vec4b *self, b16 value) { (*self).x = value; }
 
 ;;GETTER
 b16 vec4b_y(vec4b self) { return self.y; }
 
 ;;SETTER
-void vec4b_setY(vec4b *self, b16 value) { (*self).y = value; }
+fn vec4b_setY(vec4b *self, b16 value) { (*self).y = value; }
 
 ;;GETTER
 b16 vec4b_z(vec4b self) { return self.z; }
 
 ;;SETTER
-void vec4b_setZ(vec4b *self, b16 value) { (*self).z = value; }
+fn vec4b_setZ(vec4b *self, b16 value) { (*self).z = value; }
 
 ;;GETTER
 b16 vec4b_w(vec4b self) { return self.w; }
 
 ;;SETTER
-void vec4b_setW(vec4b *self, b16 value) { (*self).w = value; }
+fn vec4b_setW(vec4b *self, b16 value) { (*self).w = value; }
 
 ;;GETTER
 f32 vec4f_x(vec4f self) { return self.x; }
 
 ;;SETTER
-void vec4f_setX(vec4f *self, f32 value) { (*self).x = value; }
+fn vec4f_setX(vec4f *self, f32 value) { (*self).x = value; }
 
 ;;GETTER
 f32 vec4f_y(vec4f self) { return self.y; }
 
 ;;SETTER
-void vec4f_setY(vec4f *self, f32 value) { (*self).y = value; }
+fn vec4f_setY(vec4f *self, f32 value) { (*self).y = value; }
 
 ;;GETTER
 f32 vec4f_z(vec4f self) { return self.z; }
 
 ;;SETTER
-void vec4f_setZ(vec4f *self, f32 value) { (*self).z = value; }
+fn vec4f_setZ(vec4f *self, f32 value) { (*self).z = value; }
 
 ;;GETTER
 f32 vec4f_w(vec4f self) { return self.w; }
 
 ;;SETTER
-void vec4f_setW(vec4f *self, f32 value) { (*self).w = value; }
+fn vec4f_setW(vec4f *self, f32 value) { (*self).w = value; }
 
 ;;GETTER
 d64 vec4d_x(vec4d self) { return self.x; }
 
 ;;SETTER
-void vec4d_setX(vec4d *self, d64 value) { (*self).x = value; }
+fn vec4d_setX(vec4d *self, d64 value) { (*self).x = value; }
 
 ;;GETTER
 d64 vec4d_y(vec4d self) { return self.y; }
 
 ;;SETTER
-void vec4d_setY(vec4d *self, d64 value) { (*self).y = value; }
+fn vec4d_setY(vec4d *self, d64 value) { (*self).y = value; }
 
 ;;GETTER
 d64 vec4d_z(vec4d self) { return self.z; }
 
 ;;SETTER
-void vec4d_setZ(vec4d *self, d64 value) { (*self).z = value; }
+fn vec4d_setZ(vec4d *self, d64 value) { (*self).z = value; }
 
 ;;GETTER
 d64 vec4d_w(vec4d self) { return self.w; }
 
 ;;SETTER
-void vec4d_setW(vec4d *self, d64 value) { (*self).w = value; }
+fn vec4d_setW(vec4d *self, d64 value) { (*self).w = value; }
 
 // ---------------------------------------------------------------- constructors
 

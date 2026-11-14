@@ -105,25 +105,25 @@ _Static_assert(sizeof(mat3d) / sizeof(d64) == 12, "mat3d data seam is 12 lanes")
 f32 mat2f_at(const mat2f *self, u32 row, u32 col);
 
 ;;SETTER
-void mat2f_setAt(mat2f *self, u32 row, u32 col, f32 value);
+fn mat2f_setAt(mat2f *self, u32 row, u32 col, f32 value);
 
 ;;GETTER
 vec2f mat2f_col(const mat2f *self, u32 col);
 
 ;;SETTER
-void mat2f_setCol(mat2f *self, u32 col, vec2f value);
+fn mat2f_setCol(mat2f *self, u32 col, vec2f value);
 
 ;;GETTER
 d64 mat2d_at(const mat2d *self, u32 row, u32 col);
 
 ;;SETTER
-void mat2d_setAt(mat2d *self, u32 row, u32 col, d64 value);
+fn mat2d_setAt(mat2d *self, u32 row, u32 col, d64 value);
 
 ;;GETTER
 vec2d mat2d_col(const mat2d *self, u32 col);
 
 ;;SETTER
-void mat2d_setCol(mat2d *self, u32 col, vec2d value);
+fn mat2d_setCol(mat2d *self, u32 col, vec2d value);
 
 // ---------------------------------------------------------------- mat3 accessors
 
@@ -131,25 +131,25 @@ void mat2d_setCol(mat2d *self, u32 col, vec2d value);
 f32 mat3f_at(const mat3f *self, u32 row, u32 col);
 
 ;;SETTER
-void mat3f_setAt(mat3f *self, u32 row, u32 col, f32 value);
+fn mat3f_setAt(mat3f *self, u32 row, u32 col, f32 value);
 
 ;;GETTER
 vec3f mat3f_col(const mat3f *self, u32 col);
 
 ;;SETTER
-void mat3f_setCol(mat3f *self, u32 col, vec3f value);
+fn mat3f_setCol(mat3f *self, u32 col, vec3f value);
 
 ;;GETTER
 d64 mat3d_at(const mat3d *self, u32 row, u32 col);
 
 ;;SETTER
-void mat3d_setAt(mat3d *self, u32 row, u32 col, d64 value);
+fn mat3d_setAt(mat3d *self, u32 row, u32 col, d64 value);
 
 ;;GETTER
 vec3d mat3d_col(const mat3d *self, u32 col);
 
 ;;SETTER
-void mat3d_setCol(mat3d *self, u32 col, vec3d value);
+fn mat3d_setCol(mat3d *self, u32 col, vec3d value);
 
 // ---------------------------------------------------------------- mat4 accessors
 
@@ -157,25 +157,25 @@ void mat3d_setCol(mat3d *self, u32 col, vec3d value);
 f32 mat4f_at(const mat4f *self, u32 row, u32 col);
 
 ;;SETTER
-void mat4f_setAt(mat4f *self, u32 row, u32 col, f32 value);
+fn mat4f_setAt(mat4f *self, u32 row, u32 col, f32 value);
 
 ;;GETTER
 vec4f mat4f_col(const mat4f *self, u32 col);
 
 ;;SETTER
-void mat4f_setCol(mat4f *self, u32 col, vec4f value);
+fn mat4f_setCol(mat4f *self, u32 col, vec4f value);
 
 ;;GETTER
 d64 mat4d_at(const mat4d *self, u32 row, u32 col);
 
 ;;SETTER
-void mat4d_setAt(mat4d *self, u32 row, u32 col, d64 value);
+fn mat4d_setAt(mat4d *self, u32 row, u32 col, d64 value);
 
 ;;GETTER
 vec4d mat4d_col(const mat4d *self, u32 col);
 
 ;;SETTER
-void mat4d_setCol(mat4d *self, u32 col, vec4d value);
+fn mat4d_setCol(mat4d *self, u32 col, vec4d value);
 
 // ---------------------------------------------------------------- mat2 constructors
 

@@ -137,37 +137,37 @@ _Static_assert(sizeof(vec3d) == sizeof(vec4d), "a vec3d is a vec4d with lane 4 z
 b16 vec2b_x(vec2b self);
 
 ;;SETTER
-void vec2b_setX(vec2b *self, b16 value);
+fn vec2b_setX(vec2b *self, b16 value);
 
 ;;GETTER
 b16 vec2b_y(vec2b self);
 
 ;;SETTER
-void vec2b_setY(vec2b *self, b16 value);
+fn vec2b_setY(vec2b *self, b16 value);
 
 ;;GETTER
 f32 vec2f_x(vec2f self);
 
 ;;SETTER
-void vec2f_setX(vec2f *self, f32 value);
+fn vec2f_setX(vec2f *self, f32 value);
 
 ;;GETTER
 f32 vec2f_y(vec2f self);
 
 ;;SETTER
-void vec2f_setY(vec2f *self, f32 value);
+fn vec2f_setY(vec2f *self, f32 value);
 
 ;;GETTER
 d64 vec2d_x(vec2d self);
 
 ;;SETTER
-void vec2d_setX(vec2d *self, d64 value);
+fn vec2d_setX(vec2d *self, d64 value);
 
 ;;GETTER
 d64 vec2d_y(vec2d self);
 
 ;;SETTER
-void vec2d_setY(vec2d *self, d64 value);
+fn vec2d_setY(vec2d *self, d64 value);
 
 // ---------------------------------------------------------------- vec3 accessors
 
@@ -175,55 +175,55 @@ void vec2d_setY(vec2d *self, d64 value);
 b16 vec3b_x(vec3b self);
 
 ;;SETTER
-void vec3b_setX(vec3b *self, b16 value);
+fn vec3b_setX(vec3b *self, b16 value);
 
 ;;GETTER
 b16 vec3b_y(vec3b self);
 
 ;;SETTER
-void vec3b_setY(vec3b *self, b16 value);
+fn vec3b_setY(vec3b *self, b16 value);
 
 ;;GETTER
 b16 vec3b_z(vec3b self);
 
 ;;SETTER
-void vec3b_setZ(vec3b *self, b16 value);
+fn vec3b_setZ(vec3b *self, b16 value);
 
 ;;GETTER
 f32 vec3f_x(vec3f self);
 
 ;;SETTER
-void vec3f_setX(vec3f *self, f32 value);
+fn vec3f_setX(vec3f *self, f32 value);
 
 ;;GETTER
 f32 vec3f_y(vec3f self);
 
 ;;SETTER
-void vec3f_setY(vec3f *self, f32 value);
+fn vec3f_setY(vec3f *self, f32 value);
 
 ;;GETTER
 f32 vec3f_z(vec3f self);
 
 ;;SETTER
-void vec3f_setZ(vec3f *self, f32 value);
+fn vec3f_setZ(vec3f *self, f32 value);
 
 ;;GETTER
 d64 vec3d_x(vec3d self);
 
 ;;SETTER
-void vec3d_setX(vec3d *self, d64 value);
+fn vec3d_setX(vec3d *self, d64 value);
 
 ;;GETTER
 d64 vec3d_y(vec3d self);
 
 ;;SETTER
-void vec3d_setY(vec3d *self, d64 value);
+fn vec3d_setY(vec3d *self, d64 value);
 
 ;;GETTER
 d64 vec3d_z(vec3d self);
 
 ;;SETTER
-void vec3d_setZ(vec3d *self, d64 value);
+fn vec3d_setZ(vec3d *self, d64 value);
 
 // ---------------------------------------------------------------- vec4 accessors
 
@@ -231,73 +231,73 @@ void vec3d_setZ(vec3d *self, d64 value);
 b16 vec4b_x(vec4b self);
 
 ;;SETTER
-void vec4b_setX(vec4b *self, b16 value);
+fn vec4b_setX(vec4b *self, b16 value);
 
 ;;GETTER
 b16 vec4b_y(vec4b self);
 
 ;;SETTER
-void vec4b_setY(vec4b *self, b16 value);
+fn vec4b_setY(vec4b *self, b16 value);
 
 ;;GETTER
 b16 vec4b_z(vec4b self);
 
 ;;SETTER
-void vec4b_setZ(vec4b *self, b16 value);
+fn vec4b_setZ(vec4b *self, b16 value);
 
 ;;GETTER
 b16 vec4b_w(vec4b self);
 
 ;;SETTER
-void vec4b_setW(vec4b *self, b16 value);
+fn vec4b_setW(vec4b *self, b16 value);
 
 ;;GETTER
 f32 vec4f_x(vec4f self);
 
 ;;SETTER
-void vec4f_setX(vec4f *self, f32 value);
+fn vec4f_setX(vec4f *self, f32 value);
 
 ;;GETTER
 f32 vec4f_y(vec4f self);
 
 ;;SETTER
-void vec4f_setY(vec4f *self, f32 value);
+fn vec4f_setY(vec4f *self, f32 value);
 
 ;;GETTER
 f32 vec4f_z(vec4f self);
 
 ;;SETTER
-void vec4f_setZ(vec4f *self, f32 value);
+fn vec4f_setZ(vec4f *self, f32 value);
 
 ;;GETTER
 f32 vec4f_w(vec4f self);
 
 ;;SETTER
-void vec4f_setW(vec4f *self, f32 value);
+fn vec4f_setW(vec4f *self, f32 value);
 
 ;;GETTER
 d64 vec4d_x(vec4d self);
 
 ;;SETTER
-void vec4d_setX(vec4d *self, d64 value);
+fn vec4d_setX(vec4d *self, d64 value);
 
 ;;GETTER
 d64 vec4d_y(vec4d self);
 
 ;;SETTER
-void vec4d_setY(vec4d *self, d64 value);
+fn vec4d_setY(vec4d *self, d64 value);
 
 ;;GETTER
 d64 vec4d_z(vec4d self);
 
 ;;SETTER
-void vec4d_setZ(vec4d *self, d64 value);
+fn vec4d_setZ(vec4d *self, d64 value);
 
 ;;GETTER
 d64 vec4d_w(vec4d self);
 
 ;;SETTER
-void vec4d_setW(vec4d *self, d64 value);
+fn vec4d_setW(vec4d *self, d64 value);
 
 // ---------------------------------------------------------------- vec2 constructors
 

@@ -18,12 +18,12 @@ f32 if64_fraction(if64 self) {
 }
 
 ;;SETTER
-void if64_setInteger(if64 *self, i32 value) {
+fn if64_setInteger(if64 *self, i32 value) {
     (*self).integer = value;
 }
 
 ;;SETTER
-void if64_setFraction(if64 *self, f32 value) {
+fn if64_setFraction(if64 *self, f32 value) {
     (*self).fraction = value;
 }
 
@@ -64,7 +64,7 @@ f32 if64_toF32(if64 value) {
     return (f32) if64_integer(value) + if64_fraction(value);
 }
 
-void if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
+fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)
@@ -81,7 +81,7 @@ void if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated)
     }
 }
 
-void if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
+fn if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)

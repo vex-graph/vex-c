@@ -16,37 +16,37 @@
 b16 vec2b_x(const vec2b self) { return self.x; }
 
 ;;SETTER
-void vec2b_setX(vec2b *self, b16 value) { (*self).x = value; }
+fn vec2b_setX(vec2b *self, b16 value) { (*self).x = value; }
 
 ;;GETTER
 b16 vec2b_y(vec2b self) { return self.y; }
 
 ;;SETTER
-void vec2b_setY(vec2b *self, b16 value) { (*self).y = value; }
+fn vec2b_setY(vec2b *self, b16 value) { (*self).y = value; }
 
 ;;GETTER
 f32 vec2f_x(vec2f self) { return self.x; }
 
 ;;SETTER
-void vec2f_setX(vec2f *self, f32 value) { (*self).x = value; }
+fn vec2f_setX(vec2f *self, f32 value) { (*self).x = value; }
 
 ;;GETTER
 f32 vec2f_y(vec2f self) { return self.y; }
 
 ;;SETTER
-void vec2f_setY(vec2f *self, f32 value) { (*self).y = value; }
+fn vec2f_setY(vec2f *self, f32 value) { (*self).y = value; }
 
 ;;GETTER
 d64 vec2d_x(vec2d self) { return self.x; }
 
 ;;SETTER
-void vec2d_setX(vec2d *self, d64 value) { (*self).x = value; }
+fn vec2d_setX(vec2d *self, d64 value) { (*self).x = value; }
 
 ;;GETTER
 d64 vec2d_y(vec2d self) { return self.y; }
 
 ;;SETTER
-void vec2d_setY(vec2d *self, d64 value) { (*self).y = value; }
+fn vec2d_setY(vec2d *self, d64 value) { (*self).y = value; }
 
 // ---------------------------------------------------------------- constructors
 

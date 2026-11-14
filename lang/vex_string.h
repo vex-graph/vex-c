@@ -41,7 +41,7 @@ string string_fromCString(const char *text);
 // --- Core ---
 bool string_equals(const string *self, const string *other);
 bool string_append(string *self, const string *other);
-void string_clear(string *self);
+fn string_clear(string *self);
 
 // --- Getters ---
 ;;GETTER
@@ -54,7 +54,7 @@ bool string_isEmpty(const string *self);
 const u8 *string_data(const string *self);
 
 // --- String projections (the toString Law) ---
-void string_toString(const string *self, char *dest, bytes cap, bool *outTruncated);
-void string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTruncated);
+fn string_toString(const string *self, char *dest, bytes cap, bool *outTruncated);
+fn string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTruncated);
 
 #endif
