@@ -43,6 +43,7 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 ### Primitive Vocabulary Law
 
 * The width is the name: `u8`, `i8`, `u16`, `i16`, `u32`, `i32`, `u64`, `i64`, `f32`, `d64` are the ecosystem spellings.
+* `u32` is the default integer: a count, index, mask, flag or any value that can be unsigned is spelled `u32`; `i32` is used only when the value is signed. `u64` is the default when a wider integer is needed, `i64` the signed exception.
 * Atomic spellings prefix the scalar with `a`: `ai8`..`ai64`, `au8`..`au64`, `af32`, `ad64`; the atomic form keeps the scalar's width and promises no particular lock-freedom.
 * `aif64` is one whole-word atomic pair; `ald128` is two independently atomic halves (`ai64` + `ad64`), never a single 128-bit atomic.
 * `int`, `long`, `long long` and the `stdint.h` names do not appear in new ecosystem source; the aliases are the only permitted spelling above this header.
@@ -52,7 +53,9 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 * `bytes` is `bytes`, the type `sizeof` returns; it is the size type, not a fixed-width integer.
 * Rust projects the same vocabulary: `u8`..`u64`, `i8`..`i64`, `f32`, `bool` are already the name and get no alias; `d64`, `bytes`, `any`, `const_any`, `fnptr` are projected once by the Rust vocabulary module, never redefined per crate.
 * `b16` and the float atomics (`af32`, `ad64`, `ald128`) are owned Rust types, not aliases: Rust core has no bfloat16 and no float atomics.
-* `fn` is `()` in Rust; `pointer` is `*mut T`/`*const T` (or `usize` for an address), never a third alias.
+* `fn` is `void` in return position: a function returning no value is spelled `fn name(params)`.
+* `discard` is `void` in discard-cast position: `(discard) value;` states an intentional discard. `(fn) value;` is legacy debt, not the spelling for new source.
+* `fn` is `()` in Rust; `discard` is `let _ =`/`drop`; `pointer` is `*mut T`/`*const T` (or `usize` for an address), never a third alias.
 
 ### Byte Size Law
 
