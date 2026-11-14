@@ -20,8 +20,8 @@ typedef uint8_t      u8;
 typedef int8_t       i8;
 typedef uint16_t     u16;
 typedef int16_t      i16;
-typedef uint32_t     u32;
-typedef int32_t      i32;
+typedef uint32_t     u32; // <- default type for every integer possible
+typedef int32_t      i32; // <- only use this when its signed
 typedef uint64_t     u64;
 typedef int64_t      i64;
 
@@ -34,19 +34,22 @@ typedef void*        any;
 // const any generic: the pointer moves, the bytes behind it do not. `const any`
 // is `void *const` — a const pointer — and a qualifier on a parameter is
 // discarded by the language, so it promises nothing about the data.
+// also idk but i guess thats how c grammar works lol.. thought it can be appended thru keywords.
 typedef const void*  const_any;
 
 // function named as is: the return spelling of a function that returns nothing,
 // so a declaration reads as what it is. `fn` keeps its one other job, the
-// `(fn) value;` discard.
+// `(discard) value;` means it discards. semantics should matter...
 typedef void         fn;
+typedef void         discard;
+
 
 // any function
 typedef any          (*fnptr)(any);
 
-_Static_assert(sizeof(pointer) * 8 == VEX_ARCH_BITS,    "pointer must be one 64-bit word on the six-target floor");
-_Static_assert(sizeof(any) * 8 == VEX_ARCH_BITS,        "any must be one 64-bit word on the six-target floor");
-_Static_assert(sizeof(const_any) * 8 == VEX_ARCH_BITS,  "const_any must be one 64-bit word on the six-target floor");
+_Static_assert(sizeof(pointer) * 8   ==       VEX_ARCH_BITS,    "pointer must be one 64-bit word on the six-target floor");
+_Static_assert(sizeof(any) * 8       ==       VEX_ARCH_BITS,    "any must be one 64-bit word on the six-target floor");
+_Static_assert(sizeof(const_any) * 8 ==       VEX_ARCH_BITS,    "const_any must be one 64-bit word on the six-target floor");
 
 // `bytes` is the type `sizeof` yields — the one spelling for an object size:
 //
@@ -69,7 +72,7 @@ _Static_assert(sizeof(const_any) * 8 == VEX_ARCH_BITS,  "const_any must be one 6
 //     bytes length;     // a byte count; the type carries the unit
 //
 // `padding` is alignment filler, never a synonym for object size.
-typedef size_t bytes;
+typedef size_t          bytes;
 
 _Static_assert(_Generic((bytes) 0, bytes: 1, default: 0),          "bytes must be bytes, the type sizeof returns");
 _Static_assert(sizeof(bytes) == 8,                                  "bytes must be 64-bit on the six-target floor");
@@ -77,8 +80,8 @@ _Static_assert(sizeof(bytes) == 8,                                  "bytes must 
 
 // f32 and d64 are the floor: binary32 and binary64, 4 and 8 bytes on every
 // target we ship.
-typedef float  f32;
-typedef double d64;
+typedef float           f32;
+typedef double          d64;
 
 
 // Atomic spellings: a = atomic, then the scalar spelling. The atomic form
