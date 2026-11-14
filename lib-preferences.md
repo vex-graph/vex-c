@@ -50,6 +50,9 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 * `b16` is not `_Float16` (IEEE binary16).
 * `u128`/`i128` exist only when `__SIZEOF_INT128__` is defined; a target without them gets a compile error at the use site, never a silent wider substitute.
 * `bytes` is `bytes`, the type `sizeof` returns; it is the size type, not a fixed-width integer.
+* Rust projects the same vocabulary: `u8`..`u64`, `i8`..`i64`, `f32`, `bool` are already the name and get no alias; `d64`, `bytes`, `any`, `const_any`, `fnptr` are projected once by the Rust vocabulary module, never redefined per crate.
+* `b16` and the float atomics (`af32`, `ad64`, `ald128`) are owned Rust types, not aliases: Rust core has no bfloat16 and no float atomics.
+* `fn` is `()` in Rust; `pointer` is `*mut T`/`*const T` (or `usize` for an address), never a third alias.
 
 ### Byte Size Law
 
