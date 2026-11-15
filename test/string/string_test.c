@@ -10,15 +10,15 @@
 
 #include "vex.h"
 
-static int failures;
+static i32 failures;
 
-static fn check(int ok, const char *what) {
+static fn check(i32 ok, const char *what) {
     if (ok) return;
     fprintf(stderr, "string_test: FAIL %s\n", what);
     failures++;
 }
 
-int main() {
+i32 main() {
     // Empty construction, including the zero-argument dispatch.
     string empty = string();
     check(string_len(&empty) == 0, "string() is empty");

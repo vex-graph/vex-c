@@ -23,16 +23,16 @@ _Static_assert(sizeof(mat4d) == 4 * sizeof(vec4d), "mat4d is four vec4d columns"
 _Static_assert(_Alignof(mat3f) == 16, "mat3f columns are 128-bit, 16-aligned");
 _Static_assert(_Alignof(mat4d) == 32, "mat4d columns are 256-bit, 32-aligned");
 
-static int failures;
+static i32 failures;
 
-static fn check(int ok, const char *what) {
+static fn check(i32 ok, const char *what) {
     if (ok) return;
     fprintf(stderr, "matrix_test: FAIL %s\n", what);
     failures++;
 }
 
-static int near_f32(f32 a, f32 b) { return fabsf(a - b) < 1e-6f; }
-static int near_d64(d64 a, d64 b) { return fabs(a - b) < 1e-12; }
+static i32 near_f32(f32 a, f32 b) { return fabsf(a - b) < 1e-6f; }
+static i32 near_d64(d64 a, d64 b) { return fabs(a - b) < 1e-12; }
 
 static mat2f mat2f_from(f32 a, f32 b, f32 c, f32 d) {
     mat2f m = mat2f_0();
@@ -53,7 +53,7 @@ static mat3f mat3f_from_rows(f32 a, f32 b, f32 c,
     return m;
 }
 
-int main() {
+i32 main() {
     // Entry accessors and the zeroed column padding.
     mat3f id = mat3f_identity();
     check(mat3f_at(&id, 0, 0) == 1.0f && mat3f_at(&id, 1, 1) == 1.0f

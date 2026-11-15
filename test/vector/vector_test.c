@@ -18,18 +18,18 @@ _Static_assert(sizeof(vec4d) == 4 * sizeof(d64), "vec4d is four d64 lanes");
 _Static_assert(_Alignof(vec3d) == 32, "vec3d is a 256-bit value");
 _Static_assert(_Alignof(vec4f) == 16, "vec4f is a 128-bit value");
 
-static int failures;
+static i32 failures;
 
-static fn check(int ok, const char *what) {
+static fn check(i32 ok, const char *what) {
     if (ok) return;
     fprintf(stderr, "vector_test: FAIL %s\n", what);
     failures++;
 }
 
-static int near_f32(f32 a, f32 b) { return fabsf(a - b) < 1e-6f; }
-static int near_d64(d64 a, d64 b) { return fabs(a - b) < 1e-12; }
+static i32 near_f32(f32 a, f32 b) { return fabsf(a - b) < 1e-6f; }
+static i32 near_d64(d64 a, d64 b) { return fabs(a - b) < 1e-12; }
 
-int main() {
+i32 main() {
     vec3f v = vec3f(1.0f, 2.0f, 3.0f);
 
     check(vec3f_x(v) == 1.0f, "vec3f_x reads x");

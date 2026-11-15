@@ -118,7 +118,7 @@ fn string_toString(const string *self, char *dest, bytes cap, bool *outTruncated
         return;
 
     if (self == nullptr) {
-        int written = snprintf(dest, cap, "nullptr");
+        i32 written = snprintf(dest, cap, "nullptr");
         if (written < 0 || (bytes) written >= cap) {
             if (outTruncated != nullptr)
                 *outTruncated = true;
@@ -143,7 +143,7 @@ fn string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTru
         return;
 
     if (self == nullptr) {
-        int written = snprintf(dest, cap, "nullptr");
+        i32 written = snprintf(dest, cap, "nullptr");
         if (written < 0 || (bytes) written >= cap) {
             if (outTruncated != nullptr)
                 *outTruncated = true;
@@ -157,7 +157,7 @@ fn string_toStringStruct(const string *self, char *dest, bytes cap, bool *outTru
     memcpy(body, (*self).data, n);
     body[n] = '\0';
 
-    int written = snprintf(dest, cap, "string { data=\"%s\", len=%zu }", body, n);
+    i32 written = snprintf(dest, cap, "string { data=\"%s\", len=%zu }", body, n);
 
     if (written < 0 || (bytes) written >= cap) {
         if (outTruncated != nullptr)

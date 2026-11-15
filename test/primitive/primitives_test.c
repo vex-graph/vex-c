@@ -58,7 +58,7 @@ _Static_assert(sizeof(u128) == 16, "u128 must be 128 bits on GCC and clang");
 _Static_assert(sizeof(i128) == 16, "i128 must be 128 bits on GCC and clang");
 #endif
 
-int main() {
+i32 main() {
     printf("primitives_test: u8=%zu u16=%zu u32=%zu u64=%zu f32=%zu d64=%zu\n",
            sizeof(u8), sizeof(u16), sizeof(u32), sizeof(u64),
            sizeof(f32), sizeof(d64));
@@ -67,7 +67,7 @@ int main() {
 
     {
         union { f32 as_f32; u32 as_u32; } pun;
-        int failures = 0;
+        i32 failures = 0;
 
         if (b16_bits(b16_from_f32(1.0f)) != 0x3f80u) failures++;
         if (b16_bits(b16_from_f32(-0.5f)) != 0xbf00u) failures++;
@@ -100,7 +100,7 @@ int main() {
 #endif
 
     {
-        int failures = 0;
+        i32 failures = 0;
 
         au32 counter = 0;
         atomic_fetch_add(&counter, 1);
@@ -132,7 +132,7 @@ int main() {
     }
 
     {
-        int failures = 0;
+        i32 failures = 0;
 
         if64 a = if64("1.375");
         if (if64_integer(a) != 1 || if64_fraction(a) != 0.375f) failures++;

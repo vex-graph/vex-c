@@ -9,7 +9,7 @@
 //
 //     Window *Window_0();
 //     Window *Window_1(const char *title);
-//     Window *Window_3(const char *title, int width, int height);
+//     Window *Window_3(const char *title, i32 width, i32 height);
 //     #define Window(...) CONSTRUCTOR_DISPATCH(Window, __VA_ARGS__)
 //
 // Call sites read like Java:
@@ -19,7 +19,7 @@
 //     Window *c = Window("_main", 800, 600);       // => Window_3(...)
 //
 // Dispatch is by ARG COUNT only. Type-based overloading (add(x, y) over
-// int/Vec3/Mat4) is a different problem and deliberately _out of scope here.
+// i32/Vec3/Mat4) is a different problem and deliberately _out of scope here.
 // Arity gaps are legal: declaring Window_0/_1/_3 without Window_2 means a
 // 2-arg call fails to compile, exactly like Java missing that overload.
 //
