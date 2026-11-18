@@ -427,4 +427,74 @@ vec4b vec4b_from_vec4f(vec4f a);
 #define vec4f(...) CONSTRUCTOR_DISPATCH(vec4f, __VA_ARGS__)
 #define vec4d(...) CONSTRUCTOR_DISPATCH(vec4d, __VA_ARGS__)
 
+// ---------------------------------------------------------------- generic dispatch
+
+#define vec_add(a, b) _Generic((a), \
+    vec2f: vec2f_add, \
+    vec2d: vec2d_add, \
+    vec3f: vec3f_add, \
+    vec3d: vec3d_add, \
+    vec4f: vec4f_add, \
+    vec4d: vec4d_add  \
+)(a, b)
+
+#define vec_sub(a, b) _Generic((a), \
+    vec2f: vec2f_sub, \
+    vec2d: vec2d_sub, \
+    vec3f: vec3f_sub, \
+    vec3d: vec3d_sub, \
+    vec4f: vec4f_sub, \
+    vec4d: vec4d_sub  \
+)(a, b)
+
+#define vec_neg(a) _Generic((a), \
+    vec2f: vec2f_neg, \
+    vec2d: vec2d_neg, \
+    vec3f: vec3f_neg, \
+    vec3d: vec3d_neg, \
+    vec4f: vec4f_neg, \
+    vec4d: vec4d_neg  \
+)(a)
+
+#define vec_scale(a, s) _Generic((a), \
+    vec2f: vec2f_scale, \
+    vec2d: vec2d_scale, \
+    vec3f: vec3f_scale, \
+    vec3d: vec3d_scale, \
+    vec4f: vec4f_scale, \
+    vec4d: vec4d_scale  \
+)(a, s)
+
+#define vec_dot(a, b) _Generic((a), \
+    vec2f: vec2f_dot, \
+    vec2d: vec2d_dot, \
+    vec3f: vec3f_dot, \
+    vec3d: vec3d_dot, \
+    vec4f: vec4f_dot, \
+    vec4d: vec4d_dot  \
+)(a, b)
+
+#define vec_cross(a, b) _Generic((a), \
+    vec3f: vec3f_cross, \
+    vec3d: vec3d_cross  \
+)(a, b)
+
+#define vec_length(a) _Generic((a), \
+    vec2f: vec2f_length, \
+    vec2d: vec2d_length, \
+    vec3f: vec3f_length, \
+    vec3d: vec3d_length, \
+    vec4f: vec4f_length, \
+    vec4d: vec4d_length  \
+)(a)
+
+#define vec_normalize(a) _Generic((a), \
+    vec2f: vec2f_normalize, \
+    vec2d: vec2d_normalize, \
+    vec3f: vec3f_normalize, \
+    vec3d: vec3d_normalize, \
+    vec4f: vec4f_normalize, \
+    vec4d: vec4d_normalize  \
+)(a)
+
 #endif
