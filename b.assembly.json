@@ -27,7 +27,9 @@
       "vector/vec4.c",
       "matrix/mat2.c",
       "matrix/mat3.c",
-      "matrix/mat4.c"
+      "matrix/mat4.c",
+      "quaternion/quat32.c",
+      "quaternion/quat64.c"
     ],
     "includes": [
       ".",

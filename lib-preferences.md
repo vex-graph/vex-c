@@ -4,7 +4,7 @@
 
 gist.md (`../../metadata/gists/preferences/gist.md`) is the compressed law list; all universal laws bind this repository. Read one on demand: `./tools/prefs law "<title>"`. Universal laws are inherited, never restated.
 
-Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, `vector/` and `matrix/` math layouts, `annotation.h`, platform spelling. Includes nothing above the C standard library.
+Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, `vector/`, `matrix/` and `quaternion/` math layouts, `annotation.h`, platform spelling. Includes nothing above the C standard library.
 
 ## Exclusive Laws
 
@@ -13,10 +13,11 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 | **One Door Law** | every consumer include | `#include "vex.h"`, no `lib/` or `vex/` prefix |
 | **Primitive Vocabulary Law** | `lang/primitive.h`, `lang/vex_string.h`, `bytes`, `f32`/`d64` | static asserts in the owning test |
 | **Byte Size Law** | `bytes` is `sizeof` type, never a field name | field names say what they count |
-| **Math Header Split Law** | math headers | exactly `lang/primitive.h`, `vector/vector.h`, `matrix/matrix.h`; one `.c` per shape |
+| **Math Header Split Law** | math headers | `lang/primitive.h`, `vector/vector.h`, `matrix/matrix.h`, `quaternion/quaternion.h`; one `.c` per shape; `_Generic` `vec_*` and `quat_*` shims over hand-written functions |
 | **Accessor Form Law** | getters and setters | `;;GETTER` / `;;SETTER` inventory |
 | **Vector Layout Law** | `vec2`/`vec3`/`vec4` geometry | `_Static_assert` on size and alignment |
 | **Matrix Layout Law** | `mat2`/`mat3`/`mat4` geometry | `_Static_assert` on size and alignment |
+| **Quaternion Layout Law** | `quat32`/`quat64` geometry | `_Static_assert` on size and alignment |
 | **Constructor Dispatch Law** | `Class(...)` arity spelling | owner suites compile the dispatch |
 | **Annotation Marker Law** | every `;;MARKER` | marker expands to `_Static_assert` |
 | **Loud Rejection Law** | `THROW` | cold-path only, no unwind, no exit |
@@ -66,11 +67,11 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 
 ### Math Header Split Law
 
-* The math surface is exactly three headers: `lang/primitive.h` (scalar vocabulary), `vector/vector.h` (`vec2`/`vec3`/`vec4` at `b16`/`f32`/`d64`), `matrix/matrix.h` (`mat2`/`mat3`/`mat4` at `f32`/`d64`).
-* One `.c` per shape; headers are include surfaces only (types, layout assertions, declarations), no function body in a header.
+* The math surface is four headers: `lang/primitive.h` (scalar vocabulary), `vector/vector.h` (`vec2`/`vec3`/`vec4` at `b16`/`f32`/`d64`), `matrix/matrix.h` (`mat2`/`mat3`/`mat4` at `f32`/`d64`), and `quaternion/quaternion.h` (`quat32` at `f32`, `quat64` at `d64`).
+* One `.c` per shape (`quat32.c`, `quat64.c` in `quaternion/`); headers are include surfaces only (types, layout assertions, declarations), no function body in a header except `static inline` accessors.
 * Tag and typedef share the name; helpers stay private in the `.c`.
-* Every function is written out; no family macro and no token pasting (`##`) in the math surface.
-* The one remaining macro is the `Class(...)` shim from `lang/constructor.h`.
+* Every concrete function is written out by hand; no family macro and no token pasting (`##`) in the math surface.
+* Permitted macros in the math headers are the `Class(...)` arity shim from `lang/constructor.h` and C23 `_Generic` dispatch shims (`vec_add`, `vec_sub`, `vec_dot`, `vec_normalize`, …, `quat_mul`, `quat_slerp`, `quat_rotateVec3`, `quat_normalize`, …) that route directly to the hand-written concrete functions.
 * Unused exports are dropped at link (`-flto`, or `-ffunction-sections` plus `-Wl,--gc-sections` / `-Wl,-dead_strip`), not at source.
 
 ### Accessor Form Law
@@ -100,12 +101,19 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 * A matrix is large: accessors take a `const` pointer; arithmetic takes and returns the value.
 * The geometry is checked by `_Static_assert`, never described in prose only.
 
+### Quaternion Layout Law
+
+* `quat32` is 4 × `f32` (`x, y, z, w` / `data[4]`): `sizeof(quat32) == 16` and `_Alignof(quat32) == 16`.
+* `quat64` is 4 × `d64` (`x, y, z, w` / `data[4]`): `sizeof(quat64) == 32` and `_Alignof(quat64) == 32`.
+* Identity is `(0, 0, 0, 1)`; `data[]` is the SIMD seam and the only member not reached through an accessor.
+* The geometry is checked by `_Static_assert`, never described in prose only.
+
 ### Constructor Dispatch Law
 
 * `Class(...)` is a macro over `Class_0`..`Class_8`, dispatching by argument count; it costs no code and allocates nothing.
 * A class that exposes a constructor names every accepted arity and adds the one-line shim.
 * An arity gap is intentional; a call into it fails to compile.
-* Type-based overloading is out of scope.
+* Type-based overloading for constructors is out of scope (`vec_*` and `quat_*` operation overloading uses explicit `_Generic` shims under the Math Header Split Law).
 
 ### Annotation Marker Law
 

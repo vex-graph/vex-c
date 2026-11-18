@@ -31,6 +31,7 @@
 #include "lang/lang.h"
 #include "vector/vector.h"
 #include "matrix/matrix.h"
+#include "quaternion/quaternion.h"
 #include "debug/test_support.h"
 #include "debug/throw.h"
 
