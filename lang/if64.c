@@ -64,6 +64,74 @@ f32 if64_toF32(if64 value) {
     return (f32) if64_integer(value) + if64_fraction(value);
 }
 
+if64 if64_normalize(i64 integer, d64 fraction) {
+    if (!isfinite(fraction)) {
+        return (if64){ .integer = 0, .fraction = (f32) NAN };
+    }
+    d64 carry = trunc(fraction);
+    i64 total = integer + (i64) carry;
+    d64 rem = fraction - carry;
+    if (total > 0 && rem < 0.0) {
+        total -= 1;
+        rem += 1.0;
+    } else if (total < 0 && rem > 0.0) {
+        total += 1;
+        rem -= 1.0;
+    }
+    f32 remF = (f32) rem;
+    if (remF >= 1.0f) {
+        total += 1;
+        remF = 0.0f;
+    } else if (remF <= -1.0f) {
+        total -= 1;
+        remF = 0.0f;
+    }
+    if (total > (i64) INT32_MAX || total < (i64) INT32_MIN) {
+        THROW("if64: integer overflow on normalize");
+        return if64_0();
+    }
+    return (if64){ .integer = (i32) total, .fraction = remF };
+}
+
+if64 if64_fromF32(f32 value) {
+    return if64_normalize(0, (d64) value);
+}
+
+if64 if64_fromD64(d64 value) {
+    return if64_normalize(0, value);
+}
+
+if64 if64_add(if64 a, if64 b) {
+    i64 intSum = (i64) if64_integer(a) + (i64) if64_integer(b);
+    d64 fracSum = (d64) if64_fraction(a) + (d64) if64_fraction(b);
+    return if64_normalize(intSum, fracSum);
+}
+
+if64 if64_sub(if64 a, if64 b) {
+    i64 intDiff = (i64) if64_integer(a) - (i64) if64_integer(b);
+    d64 fracDiff = (d64) if64_fraction(a) - (d64) if64_fraction(b);
+    return if64_normalize(intDiff, fracDiff);
+}
+
+if64 if64_neg(if64 self) {
+    return (if64){ .integer = -if64_integer(self), .fraction = -if64_fraction(self) };
+}
+
+i32 if64_compare(if64 a, if64 b) {
+    i32 ia = if64_integer(a), ib = if64_integer(b);
+    if (ia != ib) return (ia < ib) ? -1 : 1;
+    f32 fa = if64_fraction(a), fb = if64_fraction(b);
+    if (fa < fb) return -1;
+    if (fa > fb) return 1;
+    return 0;
+}
+
+f32 if64_toF32Relative(if64 value, if64 origin) {
+    i64 intDiff = (i64) if64_integer(value) - (i64) if64_integer(origin);
+    f32 fracDiff = if64_fraction(value) - if64_fraction(origin);
+    return (f32) intDiff + fracDiff;
+}
+
 fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;

@@ -64,6 +64,69 @@ d64 ld128_toD64(ld128 value) {
     return (d64) ld128_integer(value) + ld128_fraction(value);
 }
 
+ld128 ld128_normalize(i64 integer, d64 fraction) {
+    if (!isfinite(fraction)) {
+        return (ld128){ .integer = 0, .fraction = (d64) NAN };
+    }
+    d64 carry = trunc(fraction);
+    i64 total = integer + (i64) carry;
+    d64 rem = fraction - carry;
+    if (total > 0 && rem < 0.0) {
+        total -= 1;
+        rem += 1.0;
+    } else if (total < 0 && rem > 0.0) {
+        total += 1;
+        rem -= 1.0;
+    }
+    if (rem >= 1.0) {
+        total += 1;
+        rem = 0.0;
+    } else if (rem <= -1.0) {
+        total -= 1;
+        rem = 0.0;
+    }
+    return (ld128){ .integer = total, .fraction = rem };
+}
+
+ld128 ld128_fromD64(d64 value) {
+    return ld128_normalize(0, value);
+}
+
+ld128 ld128_add(ld128 a, ld128 b) {
+    i64 intSum = ld128_integer(a) + ld128_integer(b);
+    d64 fracSum = ld128_fraction(a) + ld128_fraction(b);
+    return ld128_normalize(intSum, fracSum);
+}
+
+ld128 ld128_sub(ld128 a, ld128 b) {
+    i64 intDiff = ld128_integer(a) - ld128_integer(b);
+    d64 fracDiff = ld128_fraction(a) - ld128_fraction(b);
+    return ld128_normalize(intDiff, fracDiff);
+}
+
+ld128 ld128_neg(ld128 self) {
+    return (ld128){ .integer = -ld128_integer(self), .fraction = -ld128_fraction(self) };
+}
+
+i32 ld128_compare(ld128 a, ld128 b) {
+    i64 ia = ld128_integer(a), ib = ld128_integer(b);
+    if (ia != ib) return (ia < ib) ? -1 : 1;
+    d64 fa = ld128_fraction(a), fb = ld128_fraction(b);
+    if (fa < fb) return -1;
+    if (fa > fb) return 1;
+    return 0;
+}
+
+d64 ld128_toD64Relative(ld128 value, ld128 origin) {
+    i64 intDiff = ld128_integer(value) - ld128_integer(origin);
+    d64 fracDiff = ld128_fraction(value) - ld128_fraction(origin);
+    return (d64) intDiff + fracDiff;
+}
+
+f32 ld128_toF32Relative(ld128 value, ld128 origin) {
+    return (f32) ld128_toD64Relative(value, origin);
+}
+
 fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;

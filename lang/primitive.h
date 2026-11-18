@@ -210,6 +210,14 @@ fn if64_setInteger(if64 *self, i32 value);
 fn if64_setFraction(if64 *self, f32 value);
 
 f32 if64_toF32(if64 value);
+if64 if64_fromF32(f32 value);
+if64 if64_fromD64(d64 value);
+if64 if64_normalize(i64 integer, d64 fraction);
+if64 if64_add(if64 a, if64 b);
+if64 if64_sub(if64 a, if64 b);
+if64 if64_neg(if64 self);
+i32  if64_compare(if64 a, if64 b);
+f32  if64_toF32Relative(if64 value, if64 origin);
 fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated);
 fn if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated);
 
@@ -231,6 +239,14 @@ fn ld128_setInteger(ld128 *self, i64 value);
 fn ld128_setFraction(ld128 *self, d64 value);
 
 d64 ld128_toD64(ld128 value);
+ld128 ld128_fromD64(d64 value);
+ld128 ld128_normalize(i64 integer, d64 fraction);
+ld128 ld128_add(ld128 a, ld128 b);
+ld128 ld128_sub(ld128 a, ld128 b);
+ld128 ld128_neg(ld128 self);
+i32   ld128_compare(ld128 a, ld128 b);
+f32   ld128_toF32Relative(ld128 value, ld128 origin);
+d64   ld128_toD64Relative(ld128 value, ld128 origin);
 fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
 fn ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
 
