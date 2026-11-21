@@ -1,0 +1,56 @@
+{
+  "application": {
+    "id": "org.vexgraph.vexc.lib_test",
+    "name": "lib_test",
+    "displayName": "lib_test",
+    "version": "0.1.0",
+    "type": "cli",
+    "authors": [
+      "vexgraph"
+    ],
+    "publisher": "vexgraph",
+    "description": "Consolidated automated owner suite for lib",
+    "license": "MIT",
+    "homepage": "",
+    "icon": ""
+  },
+  "build": {
+    "entry": "lib_test.c",
+    "sources": [
+      "lib_test.c",
+      "../lang/primitive.c",
+      "../lang/if64.c",
+      "../lang/ld128.c",
+      "../lang/pair_parse.c",
+      "../lang/vex_string.c",
+      "../vector/vec2.c",
+      "../vector/vec3.c",
+      "../vector/vec4.c",
+      "../matrix/mat2.c",
+      "../matrix/mat3.c",
+      "../matrix/mat4.c",
+      "../quaternion/quat32.c",
+      "../quaternion/quat64.c"
+    ],
+    "includes": [
+      ".",
+      "lib"
+    ],
+    "dependencies": [],
+    "defines": [],
+    "options": [
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "link": "executable"
+  },
+  "payload": {
+    "files": []
+  },
+  "targets": {},
+  "formats": [
+    "portable"
+  ],
+  "statePolicy": "clean"
+}
