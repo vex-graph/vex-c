@@ -16,6 +16,8 @@
 #include "constructor.h"
 #include "lang/platform.h"
 
+#include <time.h>
+
 typedef uint8_t      u8;
 typedef int8_t       i8;
 typedef uint16_t     u16;
@@ -27,6 +29,9 @@ typedef int64_t      i64;
 
 // pointer (32-bit | 64-bit based)
 typedef uintptr_t    pointer;
+
+// vpointer (64-bit GPU virtual address; 0 is null, like MemoryUtil's long)
+typedef u64          vpointer;
 
 // any generic
 typedef void*        any;
@@ -73,6 +78,20 @@ _Static_assert(sizeof(const_any) * 8 ==       VEX_ARCH_BITS,    "const_any must 
 //
 // `padding` is alignment filler, never a synonym for object size.
 typedef size_t          bytes;
+
+// `timestamp` is the portable C calendar time scalar (replacing `time_t`).
+// `thread` is the portable OS thread handle (`pthread_t` on POSIX, `any` /
+// Win32 HANDLE on Windows) without pulling `<windows.h>` into every file.
+// `ssize_t` is banned: use `bytes` for sizes/counts and `i64` at raw OS
+// syscall return boundaries (`read`, `write`, `send`, `recv`).
+typedef time_t          timestamp;
+
+#if defined(VEX_PLATFORM_WINDOWS)
+typedef any             thread;
+#else
+#include <pthread.h>
+typedef pthread_t       thread;
+#endif
 
 _Static_assert(_Generic((bytes) 0, bytes: 1, default: 0),          "bytes must be bytes, the type sizeof returns");
 _Static_assert(sizeof(bytes) == 8,                                  "bytes must be 64-bit on the six-target floor");
