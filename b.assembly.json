@@ -29,7 +29,8 @@
       "matrix/mat3.c",
       "matrix/mat4.c",
       "quaternion/quat32.c",
-      "quaternion/quat64.c"
+      "quaternion/quat64.c",
+      "debug/print.c"
     ],
     "includes": [
       ".",

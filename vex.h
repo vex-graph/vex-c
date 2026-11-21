@@ -27,6 +27,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "lang/lang.h"
 #include "vector/vector.h"
@@ -34,5 +35,6 @@
 #include "quaternion/quaternion.h"
 #include "debug/test_support.h"
 #include "debug/throw.h"
+#include "debug/print.h"
 
 #endif
