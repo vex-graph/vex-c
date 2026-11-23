@@ -1,91 +1,201 @@
-// vec4.c — vec4b, vec4f and vec4d.
-//
-// One shape, three widths, one translation unit. A vec4 is the storage shape
-// every other vector matches: vec3 differs only by pinning the fourth lane.
+/**
+ * vec4.c, vec4b, vec4f and vec4d.
+ *
+ * One shape, three widths, one translation unit. A vec4 is the storage shape
+ * every other vector matches: vec3 differs only by pinning the fourth lane.
+ */
 
 #include "vex.h"
 #include "vector/vector.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: vec4
+ * ============================================================================
+ * 4-component vector value types (vec4b, vec4f, vec4d) owned by lib/vector.
+ * Canonical 4-lane storage shape matching mat4 columns and vec3 padding.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: vec4b / vec4f / vec4d (lib/vector/vec4.c)
+ * ============================================================================
+ * 4-lane vector values across b16, f32, and d64 precisions.
+ *
+ * --FIELDS-------------------------------
+ * public   b16/f32/d64  x, y, z, w        4D coordinates / RGBA lanes
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   vec4*_0 / vec4*_1 / vec4*_4    zero, scalar splat, explicit xyzw
+ *
+ * --FUNCTIONS----------------------------
+ * public   vec4*_add / sub / neg / scale  component-wise vector arithmetic
+ * public   vec4*_dot / length / normalize dot product, norm, unit vector
+ * public   vec4b_to_vec4f / from_vec4f    b16/f32 storage conversion
+ *
+ * --GETTERS------------------------------
+ * public   vec4*_x / y / z / w            component readers
+ *
+ * --SETTERS------------------------------
+ * public   vec4*_setX / setY / setZ / setW component writers
+ * ============================================================================
+ */
 
-;;GETTER
-b16 vec4b_x(vec4b self) { return self.x; }
-
-;;SETTER
-fn vec4b_setX(vec4b *self, b16 value) { (*self).x = value; }
-
-;;GETTER
-b16 vec4b_y(vec4b self) { return self.y; }
-
-;;SETTER
-fn vec4b_setY(vec4b *self, b16 value) { (*self).y = value; }
-
-;;GETTER
-b16 vec4b_z(vec4b self) { return self.z; }
-
-;;SETTER
-fn vec4b_setZ(vec4b *self, b16 value) { (*self).z = value; }
-
-;;GETTER
-b16 vec4b_w(vec4b self) { return self.w; }
-
-;;SETTER
-fn vec4b_setW(vec4b *self, b16 value) { (*self).w = value; }
-
-;;GETTER
-f32 vec4f_x(vec4f self) { return self.x; }
-
-;;SETTER
-fn vec4f_setX(vec4f *self, f32 value) { (*self).x = value; }
-
-;;GETTER
-f32 vec4f_y(vec4f self) { return self.y; }
-
-;;SETTER
-fn vec4f_setY(vec4f *self, f32 value) { (*self).y = value; }
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
-f32 vec4f_z(vec4f self) { return self.z; }
+b16 vec4b_x(vec4b self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn vec4f_setZ(vec4f *self, f32 value) { (*self).z = value; }
+fn vec4b_setX(vec4b *self, b16 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-f32 vec4f_w(vec4f self) { return self.w; }
+b16 vec4b_y(vec4b self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn vec4f_setW(vec4f *self, f32 value) { (*self).w = value; }
+fn vec4b_setY(vec4b *self, b16 value)
+{
+    (*self).y = value;
+}
 
 ;;GETTER
-d64 vec4d_x(vec4d self) { return self.x; }
+b16 vec4b_z(vec4b self)
+{
+    return self.z;
+}
 
 ;;SETTER
-fn vec4d_setX(vec4d *self, d64 value) { (*self).x = value; }
+fn vec4b_setZ(vec4b *self, b16 value)
+{
+    (*self).z = value;
+}
 
 ;;GETTER
-d64 vec4d_y(vec4d self) { return self.y; }
+b16 vec4b_w(vec4b self)
+{
+    return self.w;
+}
 
 ;;SETTER
-fn vec4d_setY(vec4d *self, d64 value) { (*self).y = value; }
+fn vec4b_setW(vec4b *self, b16 value)
+{
+    (*self).w = value;
+}
 
 ;;GETTER
-d64 vec4d_z(vec4d self) { return self.z; }
+f32 vec4f_x(vec4f self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn vec4d_setZ(vec4d *self, d64 value) { (*self).z = value; }
+fn vec4f_setX(vec4f *self, f32 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-d64 vec4d_w(vec4d self) { return self.w; }
+f32 vec4f_y(vec4f self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn vec4d_setW(vec4d *self, d64 value) { (*self).w = value; }
+fn vec4f_setY(vec4f *self, f32 value)
+{
+    (*self).y = value;
+}
 
-// ---------------------------------------------------------------- constructors
+;;GETTER
+f32 vec4f_z(vec4f self)
+{
+    return self.z;
+}
 
-vec4b vec4b_0() { return (vec4b) { 0 }; }
+;;SETTER
+fn vec4f_setZ(vec4f *self, f32 value)
+{
+    (*self).z = value;
+}
+
+;;GETTER
+f32 vec4f_w(vec4f self)
+{
+    return self.w;
+}
+
+;;SETTER
+fn vec4f_setW(vec4f *self, f32 value)
+{
+    (*self).w = value;
+}
+
+;;GETTER
+d64 vec4d_x(vec4d self)
+{
+    return self.x;
+}
+
+;;SETTER
+fn vec4d_setX(vec4d *self, d64 value)
+{
+    (*self).x = value;
+}
+
+;;GETTER
+d64 vec4d_y(vec4d self)
+{
+    return self.y;
+}
+
+;;SETTER
+fn vec4d_setY(vec4d *self, d64 value)
+{
+    (*self).y = value;
+}
+
+;;GETTER
+d64 vec4d_z(vec4d self)
+{
+    return self.z;
+}
+
+;;SETTER
+fn vec4d_setZ(vec4d *self, d64 value)
+{
+    (*self).z = value;
+}
+
+;;GETTER
+d64 vec4d_w(vec4d self)
+{
+    return self.w;
+}
+
+;;SETTER
+fn vec4d_setW(vec4d *self, d64 value)
+{
+    (*self).w = value;
+}
+
+/** ---------------------------------------------------------------- constructors */
+
+vec4b vec4b_0()
+{
+    return (vec4b) { 0 };
+}
 
 vec4b vec4b_1(b16 scalar) {
     vec4b v = vec4b_0();
@@ -105,7 +215,10 @@ vec4b vec4b_4(b16 x, b16 y, b16 z, b16 w) {
     return v;
 }
 
-vec4f vec4f_0() { return (vec4f) { 0 }; }
+vec4f vec4f_0()
+{
+    return (vec4f) { 0 };
+}
 
 vec4f vec4f_1(f32 scalar) {
     vec4f v = vec4f_0();
@@ -125,7 +238,10 @@ vec4f vec4f_4(f32 x, f32 y, f32 z, f32 w) {
     return v;
 }
 
-vec4d vec4d_0() { return (vec4d) { 0 }; }
+vec4d vec4d_0()
+{
+    return (vec4d) { 0 };
+}
 
 vec4d vec4d_1(d64 scalar) {
     vec4d v = vec4d_0();
@@ -145,7 +261,7 @@ vec4d vec4d_4(d64 x, d64 y, d64 z, d64 w) {
     return v;
 }
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
 vec4f vec4f_add(vec4f a, vec4f b) {
     return vec4f_4(vec4f_x(a) + vec4f_x(b), vec4f_y(a) + vec4f_y(b),
@@ -171,11 +287,15 @@ f32 vec4f_dot(vec4f a, vec4f b) {
          + vec4f_z(a) * vec4f_z(b) + vec4f_w(a) * vec4f_w(b);
 }
 
-f32 vec4f_length(vec4f self) { return sqrtf(vec4f_dot(self, self)); }
+f32 vec4f_length(vec4f self)
+{
+    return sqrtf(vec4f_dot(self, self));
+}
 
 vec4f vec4f_normalize(vec4f self) {
     f32 len = vec4f_length(self);
-    if (len == 0.0f) return vec4f_0();
+    if (len == 0.0f)
+        return vec4f_0();
     return vec4f_scale(self, 1.0f / len);
 }
 
@@ -203,15 +323,19 @@ d64 vec4d_dot(vec4d a, vec4d b) {
          + vec4d_z(a) * vec4d_z(b) + vec4d_w(a) * vec4d_w(b);
 }
 
-d64 vec4d_length(vec4d self) { return sqrt(vec4d_dot(self, self)); }
+d64 vec4d_length(vec4d self)
+{
+    return sqrt(vec4d_dot(self, self));
+}
 
 vec4d vec4d_normalize(vec4d self) {
     d64 len = vec4d_length(self);
-    if (len == 0.0) return vec4d_0();
+    if (len == 0.0)
+        return vec4d_0();
     return vec4d_scale(self, 1.0 / len);
 }
 
-// ---------------------------------------------------------------- b16 bridge
+/** ---------------------------------------------------------------- b16 bridge */
 
 vec4f vec4b_to_vec4f(vec4b a) {
     return vec4f_4(b16_to_f32(vec4b_x(a)), b16_to_f32(vec4b_y(a)),

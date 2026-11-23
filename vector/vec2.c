@@ -1,56 +1,130 @@
-// vec2.c — vec2b, vec2f and vec2d.
-//
-// One shape, three widths, one translation unit. Accessors, constructors,
-// arithmetic, the b16 bridge and the cold text projection all live here;
-// vector.h declares them and owns the layout.
+/**
+ * vec2.c, vec2b, vec2f and vec2d.
+ *
+ * One shape, three widths, one translation unit. Accessors, constructors,
+ * arithmetic, the b16 bridge and the cold text projection all live here;
+ * vector.h declares them and owns the layout.
+ */
 
 #include "vex.h"
 #include "vector/vector.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: vec2
+ * ============================================================================
+ * 2-component vector value types (vec2b, vec2f, vec2d) owned by lib/vector.
+ * Provides accessors, constructors, arithmetic, and b16/f32 conversion.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: vec2b / vec2f / vec2d (lib/vector/vec2.c)
+ * ============================================================================
+ * 2-lane vector values across b16, f32, and d64 precisions.
+ *
+ * --FIELDS-------------------------------
+ * public   b16/f32/d64  x, y              2D coordinates
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   vec2*_0 / vec2*_1 / vec2*_2    zero, scalar splat, explicit xy
+ *
+ * --FUNCTIONS----------------------------
+ * public   vec2*_add / sub / neg / scale  component-wise vector arithmetic
+ * public   vec2*_dot / length / normalize dot product, norm, unit vector
+ * public   vec2b_to_vec2f / from_vec2f    b16/f32 storage conversion
+ *
+ * --GETTERS------------------------------
+ * public   vec2*_x / vec2*_y              component readers
+ *
+ * --SETTERS------------------------------
+ * public   vec2*_setX / vec2*_setY        component writers
+ * ============================================================================
+ */
+
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
-b16 vec2b_x(const vec2b self) { return self.x; }
+b16 vec2b_x(const vec2b self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn vec2b_setX(vec2b *self, b16 value) { (*self).x = value; }
+fn vec2b_setX(vec2b *self, b16 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-b16 vec2b_y(vec2b self) { return self.y; }
+b16 vec2b_y(vec2b self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn vec2b_setY(vec2b *self, b16 value) { (*self).y = value; }
+fn vec2b_setY(vec2b *self, b16 value)
+{
+    (*self).y = value;
+}
 
 ;;GETTER
-f32 vec2f_x(vec2f self) { return self.x; }
+f32 vec2f_x(vec2f self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn vec2f_setX(vec2f *self, f32 value) { (*self).x = value; }
+fn vec2f_setX(vec2f *self, f32 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-f32 vec2f_y(vec2f self) { return self.y; }
+f32 vec2f_y(vec2f self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn vec2f_setY(vec2f *self, f32 value) { (*self).y = value; }
+fn vec2f_setY(vec2f *self, f32 value)
+{
+    (*self).y = value;
+}
 
 ;;GETTER
-d64 vec2d_x(vec2d self) { return self.x; }
+d64 vec2d_x(vec2d self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn vec2d_setX(vec2d *self, d64 value) { (*self).x = value; }
+fn vec2d_setX(vec2d *self, d64 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-d64 vec2d_y(vec2d self) { return self.y; }
+d64 vec2d_y(vec2d self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn vec2d_setY(vec2d *self, d64 value) { (*self).y = value; }
+fn vec2d_setY(vec2d *self, d64 value)
+{
+    (*self).y = value;
+}
 
-// ---------------------------------------------------------------- constructors
+/** ---------------------------------------------------------------- constructors */
 
-vec2b vec2b_0() { return (vec2b) { 0 }; }
+vec2b vec2b_0()
+{
+    return (vec2b) { 0 };
+}
 
 vec2b vec2b_1(b16 scalar) {
     vec2b v = vec2b_0();
@@ -66,7 +140,10 @@ vec2b vec2b_2(b16 x, b16 y) {
     return v;
 }
 
-vec2f vec2f_0() { return (vec2f) { 0 }; }
+vec2f vec2f_0()
+{
+    return (vec2f) { 0 };
+}
 
 vec2f vec2f_1(f32 scalar) {
     vec2f v = vec2f_0();
@@ -82,7 +159,10 @@ vec2f vec2f_2(f32 x, f32 y) {
     return v;
 }
 
-vec2d vec2d_0() { return (vec2d) { 0 }; }
+vec2d vec2d_0()
+{
+    return (vec2d) { 0 };
+}
 
 vec2d vec2d_1(d64 scalar) {
     vec2d v = vec2d_0();
@@ -98,7 +178,7 @@ vec2d vec2d_2(d64 x, d64 y) {
     return v;
 }
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
 vec2f vec2f_add(vec2f a, vec2f b) {
     return vec2f_2(vec2f_x(a) + vec2f_x(b), vec2f_y(a) + vec2f_y(b));
@@ -120,11 +200,15 @@ f32 vec2f_dot(vec2f a, vec2f b) {
     return vec2f_x(a) * vec2f_x(b) + vec2f_y(a) * vec2f_y(b);
 }
 
-f32 vec2f_length(vec2f self) { return sqrtf(vec2f_dot(self, self)); }
+f32 vec2f_length(vec2f self)
+{
+    return sqrtf(vec2f_dot(self, self));
+}
 
 vec2f vec2f_normalize(vec2f self) {
     f32 len = vec2f_length(self);
-    if (len == 0.0f) return vec2f_0();
+    if (len == 0.0f)
+        return vec2f_0();
     return vec2f_scale(self, 1.0f / len);
 }
 
@@ -148,15 +232,19 @@ d64 vec2d_dot(vec2d a, vec2d b) {
     return vec2d_x(a) * vec2d_x(b) + vec2d_y(a) * vec2d_y(b);
 }
 
-d64 vec2d_length(vec2d self) { return sqrt(vec2d_dot(self, self)); }
+d64 vec2d_length(vec2d self)
+{
+    return sqrt(vec2d_dot(self, self));
+}
 
 vec2d vec2d_normalize(vec2d self) {
     d64 len = vec2d_length(self);
-    if (len == 0.0) return vec2d_0();
+    if (len == 0.0)
+        return vec2d_0();
     return vec2d_scale(self, 1.0 / len);
 }
 
-// ---------------------------------------------------------------- b16 bridge
+/** ---------------------------------------------------------------- b16 bridge */
 
 vec2f vec2b_to_vec2f(vec2b a) {
     return vec2f_2(b16_to_f32(vec2b_x(a)), b16_to_f32(vec2b_y(a)));

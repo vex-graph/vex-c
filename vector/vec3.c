@@ -1,73 +1,166 @@
-// vec3.c — vec3b, vec3f and vec3d.
-//
-// One shape, three widths, one translation unit. A vec3 carries a zeroed fourth
-// lane; the constructors start from the zeroed value, so the lane stays zero.
+/**
+ * vec3.c, vec3b, vec3f and vec3d.
+ *
+ * One shape, three widths, one translation unit. A vec3 carries a zeroed fourth
+ * lane; the constructors start from the zeroed value, so the lane stays zero.
+ */
 
 #include "vex.h"
 #include "vector/vector.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: vec3
+ * ============================================================================
+ * 3-component vector value types (vec3b, vec3f, vec3d) owned by lib/vector.
+ * Carries a zeroed fourth lane for SIMD/matrix alignment; constructors zero-init.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: vec3b / vec3f / vec3d (lib/vector/vec3.c)
+ * ============================================================================
+ * 3-lane vector values (padded to 4 lanes) across b16, f32, and d64 precisions.
+ *
+ * --FIELDS-------------------------------
+ * public   b16/f32/d64  x, y, z           3D coordinates (fourth lane pinned 0)
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   vec3*_0 / vec3*_1 / vec3*_3    zero, scalar splat, explicit xyz
+ *
+ * --FUNCTIONS----------------------------
+ * public   vec3*_add / sub / neg / scale  component-wise vector arithmetic
+ * public   vec3*_dot / cross              dot product and 3D cross product
+ * public   vec3*_length / normalize       norm and unit vector
+ * public   vec3b_to_vec3f / from_vec3f    b16/f32 storage conversion
+ *
+ * --GETTERS------------------------------
+ * public   vec3*_x / vec3*_y / vec3*_z    component readers
+ *
+ * --SETTERS------------------------------
+ * public   vec3*_setX / setY / setZ       component writers
+ * ============================================================================
+ */
 
-;;GETTER
-b16 vec3b_x(vec3b self) { return self.x; }
-
-;;SETTER
-fn vec3b_setX(vec3b *self, b16 value) { (*self).x = value; }
-
-;;GETTER
-b16 vec3b_y(vec3b self) { return self.y; }
-
-;;SETTER
-fn vec3b_setY(vec3b *self, b16 value) { (*self).y = value; }
-
-;;GETTER
-b16 vec3b_z(vec3b self) { return self.z; }
-
-;;SETTER
-fn vec3b_setZ(vec3b *self, b16 value) { (*self).z = value; }
-
-;;GETTER
-f32 vec3f_x(vec3f self) { return self.x; }
-
-;;SETTER
-fn vec3f_setX(vec3f *self, f32 value) { (*self).x = value; }
-
-;;GETTER
-f32 vec3f_y(vec3f self) { return self.y; }
-
-;;SETTER
-fn vec3f_setY(vec3f *self, f32 value) { (*self).y = value; }
-
-;;GETTER
-f32 vec3f_z(vec3f self) { return self.z; }
-
-;;SETTER
-fn vec3f_setZ(vec3f *self, f32 value) { (*self).z = value; }
-
-;;GETTER
-d64 vec3d_x(vec3d self) { return self.x; }
-
-;;SETTER
-fn vec3d_setX(vec3d *self, d64 value) { (*self).x = value; }
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
-d64 vec3d_y(vec3d self) { return self.y; }
+b16 vec3b_x(vec3b self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn vec3d_setY(vec3d *self, d64 value) { (*self).y = value; }
+fn vec3b_setX(vec3b *self, b16 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-d64 vec3d_z(vec3d self) { return self.z; }
+b16 vec3b_y(vec3b self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn vec3d_setZ(vec3d *self, d64 value) { (*self).z = value; }
+fn vec3b_setY(vec3b *self, b16 value)
+{
+    (*self).y = value;
+}
 
-// ---------------------------------------------------------------- constructors
+;;GETTER
+b16 vec3b_z(vec3b self)
+{
+    return self.z;
+}
 
-vec3b vec3b_0() { return (vec3b) { 0 }; }
+;;SETTER
+fn vec3b_setZ(vec3b *self, b16 value)
+{
+    (*self).z = value;
+}
+
+;;GETTER
+f32 vec3f_x(vec3f self)
+{
+    return self.x;
+}
+
+;;SETTER
+fn vec3f_setX(vec3f *self, f32 value)
+{
+    (*self).x = value;
+}
+
+;;GETTER
+f32 vec3f_y(vec3f self)
+{
+    return self.y;
+}
+
+;;SETTER
+fn vec3f_setY(vec3f *self, f32 value)
+{
+    (*self).y = value;
+}
+
+;;GETTER
+f32 vec3f_z(vec3f self)
+{
+    return self.z;
+}
+
+;;SETTER
+fn vec3f_setZ(vec3f *self, f32 value)
+{
+    (*self).z = value;
+}
+
+;;GETTER
+d64 vec3d_x(vec3d self)
+{
+    return self.x;
+}
+
+;;SETTER
+fn vec3d_setX(vec3d *self, d64 value)
+{
+    (*self).x = value;
+}
+
+;;GETTER
+d64 vec3d_y(vec3d self)
+{
+    return self.y;
+}
+
+;;SETTER
+fn vec3d_setY(vec3d *self, d64 value)
+{
+    (*self).y = value;
+}
+
+;;GETTER
+d64 vec3d_z(vec3d self)
+{
+    return self.z;
+}
+
+;;SETTER
+fn vec3d_setZ(vec3d *self, d64 value)
+{
+    (*self).z = value;
+}
+
+/** ---------------------------------------------------------------- constructors */
+
+vec3b vec3b_0()
+{
+    return (vec3b) { 0 };
+}
 
 vec3b vec3b_1(b16 scalar) {
     vec3b v = vec3b_0();
@@ -85,7 +178,10 @@ vec3b vec3b_3(b16 x, b16 y, b16 z) {
     return v;
 }
 
-vec3f vec3f_0() { return (vec3f) { 0 }; }
+vec3f vec3f_0()
+{
+    return (vec3f) { 0 };
+}
 
 vec3f vec3f_1(f32 scalar) {
     vec3f v = vec3f_0();
@@ -103,7 +199,10 @@ vec3f vec3f_3(f32 x, f32 y, f32 z) {
     return v;
 }
 
-vec3d vec3d_0() { return (vec3d) { 0 }; }
+vec3d vec3d_0()
+{
+    return (vec3d) { 0 };
+}
 
 vec3d vec3d_1(d64 scalar) {
     vec3d v = vec3d_0();
@@ -121,7 +220,7 @@ vec3d vec3d_3(d64 x, d64 y, d64 z) {
     return v;
 }
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
 vec3f vec3f_add(vec3f a, vec3f b) {
     return vec3f_3(vec3f_x(a) + vec3f_x(b), vec3f_y(a) + vec3f_y(b),
@@ -153,11 +252,15 @@ vec3f vec3f_cross(vec3f a, vec3f b) {
                    vec3f_x(a) * vec3f_y(b) - vec3f_y(a) * vec3f_x(b));
 }
 
-f32 vec3f_length(vec3f self) { return sqrtf(vec3f_dot(self, self)); }
+f32 vec3f_length(vec3f self)
+{
+    return sqrtf(vec3f_dot(self, self));
+}
 
 vec3f vec3f_normalize(vec3f self) {
     f32 len = vec3f_length(self);
-    if (len == 0.0f) return vec3f_0();
+    if (len == 0.0f)
+        return vec3f_0();
     return vec3f_scale(self, 1.0f / len);
 }
 
@@ -191,15 +294,19 @@ vec3d vec3d_cross(vec3d a, vec3d b) {
                    vec3d_x(a) * vec3d_y(b) - vec3d_y(a) * vec3d_x(b));
 }
 
-d64 vec3d_length(vec3d self) { return sqrt(vec3d_dot(self, self)); }
+d64 vec3d_length(vec3d self)
+{
+    return sqrt(vec3d_dot(self, self));
+}
 
 vec3d vec3d_normalize(vec3d self) {
     d64 len = vec3d_length(self);
-    if (len == 0.0) return vec3d_0();
+    if (len == 0.0)
+        return vec3d_0();
     return vec3d_scale(self, 1.0 / len);
 }
 
-// ---------------------------------------------------------------- b16 bridge
+/** ---------------------------------------------------------------- b16 bridge */
 
 vec3f vec3b_to_vec3f(vec3b a) {
     return vec3f_3(b16_to_f32(vec3b_x(a)), b16_to_f32(vec3b_y(a)),

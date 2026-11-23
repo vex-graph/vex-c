@@ -1,47 +1,49 @@
 #ifndef VEXC_VECTOR_H
 #define VEXC_VECTOR_H
 
-// vector.h — the vector value types of the floor.
-//
-// This is one of the three math headers: primitive.h (scalars), vector.h
-// (vec2/vec3/vec4) and matrix.h (mat2/mat3/mat4). Nothing else in the floor
-// carries a numeric shape.
-//
-// Layout rule — a vector is its lanes and nothing else:
-//
-//     vec2   2 lanes                     size = 2 * width, align = size
-//     vec3   3 lanes + one zeroed _pad   size = 4 * width, align = size
-//     vec4   4 lanes                     size = 4 * width, align = size
-//
-// A vec3 is a vec4 whose fourth lane is pinned to zero, so vec3f and vec4f
-// have the same size, the same alignment and the same 128-bit load. The fourth
-// lane is padding, never metadata: a coordinate frame belongs to a spatial type
-// in a higher tier, not to a numeric primitive.
-//
-// Widths follow the scalar vocabulary: b16 (bfloat16), f32 (binary32), d64
-// (binary64). b16 vectors are storage — bfloat16 has a 7-bit mantissa, so the
-// arithmetic surface converts to f32 (vec3b_to_vec3f) and computes there.
-//
-// This is the include surface: types, layout assertions and declarations.
-// The bodies live beside it, one shape per translation unit:
-//
-//     vector/vec2.c   vec2b, vec2f, vec2d
-//     vector/vec3.c   vec3b, vec3f, vec3d
-//     vector/vec4.c   vec4b, vec4f, vec4d
-//
-// Every function is declared by hand. There is no family macro and no token
-// pasting: a reader sees the exact signature that ships.
-//
-//     vec3f v = vec3f(1.0f, 2.0f, 3.0f);
-//     f32   x = vec3f_x(v);
-//     vec3f_setX(&v, 9.0f);
-//
-// `data[]` is the deliberate SIMD seam and is the one member not reached
-// through an accessor.
+/**
+ * vector.h, the vector value types of the floor.
+ *
+ * This is one of the three math headers: primitive.h (scalars), vector.h
+ * (vec2/vec3/vec4) and matrix.h (mat2/mat3/mat4). Nothing else in the floor
+ * carries a numeric shape.
+ *
+ * Layout rule, a vector is its lanes and nothing else:
+ *
+ * vec2   2 lanes                     size = 2 * width, align = size
+ * vec3   3 lanes + one zeroed _pad   size = 4 * width, align = size
+ * vec4   4 lanes                     size = 4 * width, align = size
+ *
+ * A vec3 is a vec4 whose fourth lane is pinned to zero, so vec3f and vec4f
+ * have the same size, the same alignment and the same 128-bit load. The fourth
+ * lane is padding, never metadata: a coordinate frame belongs to a spatial type
+ * in a higher tier, not to a numeric primitive.
+ *
+ * Widths follow the scalar vocabulary: b16 (bfloat16), f32 (binary32), d64
+ * (binary64). b16 vectors are storage, bfloat16 has a 7-bit mantissa, so the
+ * arithmetic surface converts to f32 (vec3b_to_vec3f) and computes there.
+ *
+ * This is the include surface: types, layout assertions and declarations.
+ * The bodies live beside it, one shape per translation unit:
+ *
+ * vector/vec2.c   vec2b, vec2f, vec2d
+ * vector/vec3.c   vec3b, vec3f, vec3d
+ * vector/vec4.c   vec4b, vec4f, vec4d
+ *
+ * Every function is declared by hand. There is no family macro and no token
+ * pasting: a reader sees the exact signature that ships.
+ *
+ * vec3f v = vec3f(1.0f, 2.0f, 3.0f);
+ * f32   x = vec3f_x(v);
+ * vec3f_setX(&v, 9.0f);
+ *
+ * `data[]` is the deliberate SIMD seam and is the one member not reached
+ * through an accessor.
+ */
 
 #include "lang/primitive.h"
 
-// ---------------------------------------------------------------- vec2
+/** ---------------------------------------------------------------- vec2 */
 
 typedef struct vec2b {
     alignas(4) union {
@@ -64,7 +66,7 @@ typedef struct vec2d {
     };
 } vec2d;
 
-// ---------------------------------------------------------------- vec3
+/** ---------------------------------------------------------------- vec3 */
 
 typedef struct vec3b {
     alignas(8) union {
@@ -87,7 +89,7 @@ typedef struct vec3d {
     };
 } vec3d;
 
-// ---------------------------------------------------------------- vec4
+/** ---------------------------------------------------------------- vec4 */
 
 typedef struct vec4b {
     alignas(8) union {
@@ -110,7 +112,7 @@ typedef struct vec4d {
     };
 } vec4d;
 
-// The layout rule, checked rather than described.
+/** The layout rule, checked rather than described. */
 
 _Static_assert(sizeof(vec2b) == 4  && _Alignof(vec2b) == 4,  "vec2b: 2 b16 lanes");
 _Static_assert(sizeof(vec2f) == 8  && _Alignof(vec2f) == 8,  "vec2f: 2 f32 lanes");
@@ -127,11 +129,13 @@ _Static_assert(sizeof(vec4d) == 32 && _Alignof(vec4d) == 32, "vec4d: 4 d64 lanes
 _Static_assert(sizeof(vec3f) == sizeof(vec4f), "a vec3f is a vec4f with lane 4 zeroed");
 _Static_assert(sizeof(vec3d) == sizeof(vec4d), "a vec3d is a vec4d with lane 4 zeroed");
 
-// ---------------------------------------------------------------- vec2 accessors
+/** ---------------------------------------------------------------- vec2 accessors */
 
-// One getter/setter pair per lane. The getter takes the value, so a read is
-// `vec3f_x(v)` with no `&` and no pointer layer. The setter takes the pointer
-// and is the only place the field is assigned.
+/**
+ * One getter/setter pair per lane. The getter takes the value, so a read is
+ * `vec3f_x(v)` with no `&` and no pointer layer. The setter takes the pointer
+ * and is the only place the field is assigned.
+ */
 
 ;;GETTER
 b16 vec2b_x(vec2b self);
@@ -169,7 +173,7 @@ d64 vec2d_y(vec2d self);
 ;;SETTER
 fn vec2d_setY(vec2d *self, d64 value);
 
-// ---------------------------------------------------------------- vec3 accessors
+/** ---------------------------------------------------------------- vec3 accessors */
 
 ;;GETTER
 b16 vec3b_x(vec3b self);
@@ -225,7 +229,7 @@ d64 vec3d_z(vec3d self);
 ;;SETTER
 fn vec3d_setZ(vec3d *self, d64 value);
 
-// ---------------------------------------------------------------- vec4 accessors
+/** ---------------------------------------------------------------- vec4 accessors */
 
 ;;GETTER
 b16 vec4b_x(vec4b self);
@@ -299,10 +303,12 @@ d64 vec4d_w(vec4d self);
 ;;SETTER
 fn vec4d_setW(vec4d *self, d64 value);
 
-// ---------------------------------------------------------------- vec2 constructors
+/** ---------------------------------------------------------------- vec2 constructors */
 
-// Arity names follow the Constructor Dispatch Law: every accepted arity is a
-// function, and the class-name macro after each family picks one.
+/**
+ * Arity names follow the Constructor Dispatch Law: every accepted arity is a
+ * function, and the class-name macro after each family picks one.
+ */
 
 vec2b vec2b_0();
 vec2b vec2b_1(b16 scalar);
@@ -316,7 +322,7 @@ vec2d vec2d_0();
 vec2d vec2d_1(d64 scalar);
 vec2d vec2d_2(d64 x, d64 y);
 
-// ---------------------------------------------------------------- vec3 constructors
+/** ---------------------------------------------------------------- vec3 constructors */
 
 vec3b vec3b_0();
 vec3b vec3b_1(b16 scalar);
@@ -330,7 +336,7 @@ vec3d vec3d_0();
 vec3d vec3d_1(d64 scalar);
 vec3d vec3d_3(d64 x, d64 y, d64 z);
 
-// ---------------------------------------------------------------- vec4 constructors
+/** ---------------------------------------------------------------- vec4 constructors */
 
 vec4b vec4b_0();
 vec4b vec4b_1(b16 scalar);
@@ -344,10 +350,12 @@ vec4d vec4d_0();
 vec4d vec4d_1(d64 scalar);
 vec4d vec4d_4(d64 x, d64 y, d64 z, d64 w);
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
-// f32 and d64 only. bfloat16 is storage; its arithmetic surface is the
-// conversion to vecNf below.
+/**
+ * f32 and d64 only. bfloat16 is storage; its arithmetic surface is the
+ * conversion to vecNf below.
+ */
 
 vec2f vec2f_add(vec2f a, vec2f b);
 vec2f vec2f_sub(vec2f a, vec2f b);
@@ -399,7 +407,7 @@ d64   vec4d_dot(vec4d a, vec4d b);
 d64   vec4d_length(vec4d self);
 vec4d vec4d_normalize(vec4d self);
 
-// ---------------------------------------------------------------- b16 bridge
+/** ---------------------------------------------------------------- b16 bridge */
 
 vec2f vec2b_to_vec2f(vec2b a);
 vec2b vec2b_from_vec2f(vec2f a);
@@ -410,10 +418,12 @@ vec3b vec3b_from_vec3f(vec3f a);
 vec4f vec4b_to_vec4f(vec4b a);
 vec4b vec4b_from_vec4f(vec4f a);
 
-// ---------------------------------------------------------------- dispatch
+/** ---------------------------------------------------------------- dispatch */
 
-// The class name is the constructor. A function-like macro only expands when
-// followed by `(`, so a declaration such as `vec3f v;` is untouched.
+/**
+ * The class name is the constructor. A function-like macro only expands when
+ * followed by `(`, so a declaration such as `vec3f v;` is untouched.
+ */
 
 #define vec2b(...) CONSTRUCTOR_DISPATCH(vec2b, __VA_ARGS__)
 #define vec2f(...) CONSTRUCTOR_DISPATCH(vec2f, __VA_ARGS__)
@@ -427,7 +437,7 @@ vec4b vec4b_from_vec4f(vec4f a);
 #define vec4f(...) CONSTRUCTOR_DISPATCH(vec4f, __VA_ARGS__)
 #define vec4d(...) CONSTRUCTOR_DISPATCH(vec4d, __VA_ARGS__)
 
-// ---------------------------------------------------------------- generic dispatch
+/** ---------------------------------------------------------------- generic dispatch */
 
 #define vec_add(a, b) _Generic((a), \
     vec2f: vec2f_add, \
