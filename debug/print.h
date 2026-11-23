@@ -1,15 +1,18 @@
 #ifndef VEXC_PRINT_H
 #define VEXC_PRINT_H
 
-// print.h -- zero-format-string variadic console logger for vex-c.
-//
-// Concatenates 0-16 arguments of any floor type (scalars, 128-bit ints, b16,
-// if64, ld128, string, C strings, vec2/3/4, mat2/3/4, quat32/64, pointers,
-// nullptr) into a single stack char buffer with zero heap allocation and writes
-// one line to stdout:
-//
-//     print("fps=", 60, " pos=", vec3f(1.0f, 2.0f, 3.0f), " ok=", true);
+/**
+ * print.h -- zero-format-string variadic console logger for vex-c.
+ *
+ * Concatenates 0-16 arguments of any floor type (scalars, 128-bit ints, b16,
+ * if64, ld128, string, C strings, vec2/3/4, mat2/3/4, quat32/64, pointers,
+ * nullptr) into a single stack utf8 buffer with zero heap allocation and writes
+ * one line to stdout:
+ *
+ * print("fps=", 60, " pos=", vec3f(1.0f, 2.0f, 3.0f), " ok=", true);
+ */
 
+#include "lang/primitive.h"
 #include "vector/vector.h"
 #include "matrix/matrix.h"
 #include "quaternion/quaternion.h"
@@ -28,7 +31,7 @@ typedef enum PrintArgKind {
 #endif
     PRINT_ARG_FLOAT,
     PRINT_ARG_CSTR,
-    PRINT_ARG_STRING,
+    PRINT_ARG_VARCHAR,
     PRINT_ARG_PTR,
     PRINT_ARG_IF64,
     PRINT_ARG_LD128,
@@ -52,7 +55,7 @@ typedef struct PrintArg {
     PrintArgKind kind;
     union {
         bool b;
-        char ch;
+        utf8 ch;
         i64 s;
         u64 u;
 #if defined(__SIZEOF_INT128__)
@@ -60,8 +63,8 @@ typedef struct PrintArg {
         u128 u128;
 #endif
         d64 d;
-        const char *cstr;
-        string str;
+        string cstr;
+        varchar vstr;
         const_any ptr;
         if64 pair64;
         ld128 pair128;
@@ -84,7 +87,7 @@ typedef struct PrintArg {
 
 PrintArg PrintArg_fromNull(const_any ignored);
 PrintArg PrintArg_fromBool(bool value);
-PrintArg PrintArg_fromChar(char value);
+PrintArg PrintArg_fromChar(utf8 value);
 PrintArg PrintArg_fromSigned(i64 value);
 PrintArg PrintArg_fromUnsigned(u64 value);
 #if defined(__SIZEOF_INT128__)
@@ -93,8 +96,8 @@ PrintArg PrintArg_fromU128(u128 value);
 #endif
 PrintArg PrintArg_fromFloat(d64 value);
 PrintArg PrintArg_fromB16(b16 value);
-PrintArg PrintArg_fromCStr(const char *value);
-PrintArg PrintArg_fromString(string value);
+PrintArg PrintArg_fromCStr(string value);
+PrintArg PrintArg_fromVarchar(varchar value);
 PrintArg PrintArg_fromPtr(const_any value);
 PrintArg PrintArg_fromIf64(if64 value);
 PrintArg PrintArg_fromLd128(ld128 value);
@@ -116,7 +119,7 @@ PrintArg PrintArg_fromMat4d(mat4d value);
 PrintArg PrintArg_fromQuat32(quat32 value);
 PrintArg PrintArg_fromQuat64(quat64 value);
 
-bytes Print_concatArgs(char *dest, bytes cap, const PrintArg *args, bytes count);
+bytes Print_concatArgs(utf8 *dest, bytes cap, const PrintArg *args, bytes count);
 fn Print_writeStream(FILE *stream, const PrintArg *args, bytes count);
 
 #if defined(__SIZEOF_INT128__)
@@ -130,7 +133,7 @@ fn Print_writeStream(FILE *stream, const PrintArg *args, bytes count);
 #define PRINT_WRAP(x) _Generic((x), \
     typeof(nullptr):    PrintArg_fromNull, \
     bool:               PrintArg_fromBool, \
-    char:               PrintArg_fromChar, \
+    utf8:               PrintArg_fromChar, \
     signed char:        PrintArg_fromSigned, \
     short:              PrintArg_fromSigned, \
     int:                PrintArg_fromSigned, \
@@ -145,9 +148,9 @@ fn Print_writeStream(FILE *stream, const PrintArg *args, bytes count);
     f32:                PrintArg_fromFloat, \
     d64:                PrintArg_fromFloat, \
     b16:                PrintArg_fromB16, \
-    char*:              PrintArg_fromCStr, \
-    const char*:        PrintArg_fromCStr, \
-    string:             PrintArg_fromString, \
+    utf8*:              PrintArg_fromCStr, \
+    string:             PrintArg_fromCStr, \
+    varchar:            PrintArg_fromVarchar, \
     if64:               PrintArg_fromIf64, \
     ld128:              PrintArg_fromLd128, \
     vec2b:              PrintArg_fromVec2b, \
