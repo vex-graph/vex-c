@@ -1,6 +1,4 @@
-//
-// Created by Vex on 11/10/26.
-//
+/** Created by Vex on 11/10/26. */
 
 #ifndef VEXGRAPH_ECOSYSTEM_LANG_H
 #define VEXGRAPH_ECOSYSTEM_LANG_H
@@ -9,6 +7,7 @@
 #include "lang/constructor.h"
 #include "lang/platform.h"
 #include "lang/primitive.h"
-#include "lang/vex_string.h"
+#include "lang/varchar.h"
+#include "lang/variable.h"
 
-#endif //VEXGRAPH_ECOSYSTEM_LANG_H
+#endif /** VEXGRAPH_ECOSYSTEM_LANG_H */

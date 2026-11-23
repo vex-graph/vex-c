@@ -1,11 +1,13 @@
 #ifndef VEXC_PAIR_PARSE_H
 #define VEXC_PAIR_PARSE_H
 
-// lang/pair_parse.h — strict decimal parsing for the composite numeric values.
-//
-// Internal seam: if64.c and ld128.c share this scanner; lang.h does not expose
-// it. The whole token must be consumed. Named constants, inf and nan are
-// accepted; no locale, no silent truncation.
+/**
+ * lang/pair_parse.h, strict decimal parsing for the composite numeric values.
+ *
+ * Internal seam: if64.c and ld128.c share this scanner; lang.h does not expose
+ * it. The whole token must be consumed. Named constants, inf and nan are
+ * accepted; no locale, no silent truncation.
+ */
 
 #include "primitive.h"
 
@@ -21,6 +23,6 @@ typedef struct PairParseResult {
     u8 nonFinite;
 } PairParseResult;
 
-PairParseStatus pair_parseText(const char *text, i64 maxPositive, PairParseResult *out);
+PairParseStatus pair_parseText(string text, i64 maxPositive, PairParseResult *out);
 
 #endif

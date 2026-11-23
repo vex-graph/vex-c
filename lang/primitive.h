@@ -1,16 +1,18 @@
 #ifndef VEXC_PRIMITIVE_H
 #define VEXC_PRIMITIVE_H
 
-// primitive.h — the one spelling of a width.
-//
-// The width is the name; the platform is never the name. `int`, `long`,
-// `long long` and `uint64_t` do not appear in ecosystem source. A width that
-// cannot be exactly 8, 16, 32 or 64 bits on all six canonical targets does not
-// get a spelling here — it is a struct, and it lives where it is used.
-//
-// vex-c owns the C built-in scalar vocabulary. Composite math value types are
-// the other two math headers: vector.h owns vec2/vec3/vec4 and matrix.h owns
-// mat2/mat3/mat4, in the same widths.
+/**
+ * primitive.h, the one spelling of a width.
+ *
+ * The width is the name; the platform is never the name. `int`, `long`,
+ * `long long` and `uint64_t` do not appear in ecosystem source. A width that
+ * cannot be exactly 8, 16, 32 or 64 bits on all six canonical targets does not
+ * get a spelling here, it is a struct, and it lives where it is used.
+ *
+ * vex-c owns the C built-in scalar vocabulary. Composite math value types are
+ * the other two math headers: vector.h owns vec2/vec3/vec4 and matrix.h owns
+ * mat2/mat3/mat4, in the same widths.
+ */
 
 #include "annotation.h"
 #include "constructor.h"
@@ -22,70 +24,100 @@ typedef uint8_t      u8;
 typedef int8_t       i8;
 typedef uint16_t     u16;
 typedef int16_t      i16;
-typedef uint32_t     u32; // <- default type for every integer possible
-typedef int32_t      i32; // <- only use this when its signed
+typedef uint32_t     u32; /** <- default type for every integer possible */
+typedef int32_t      i32; /** <- only use this when its signed */
 typedef uint64_t     u64;
 typedef int64_t      i64;
 
-// pointer (32-bit | 64-bit based)
+/** pointer (32-bit | 64-bit based) */
 typedef uintptr_t    pointer;
 
-// vpointer (64-bit GPU virtual address; 0 is null, like MemoryUtil's long)
+/** vpointer (64-bit GPU virtual address; 0 is null, like MemoryUtil's long) */
 typedef u64          vpointer;
 
-// any generic
+/** any generic */
 typedef void*        any;
 
-// const any generic: the pointer moves, the bytes behind it do not. `const any`
-// is `void *const` — a const pointer — and a qualifier on a parameter is
-// discarded by the language, so it promises nothing about the data.
-// also idk but i guess thats how c grammar works lol.. thought it can be appended thru keywords.
+/**
+ * const any generic: the pointer moves, the bytes behind it do not. `const any`
+ * is `void *const`, a const pointer, and a qualifier on a parameter is
+ * discarded by the language, so it promises nothing about the data.
+ * also idk but i guess thats how c grammar works lol.. thought it can be appended thru keywords.
+ */
 typedef const void*  const_any;
 
-// function named as is: the return spelling of a function that returns nothing,
-// so a declaration reads as what it is. `fn` keeps its one other job, the
-// `(discard) value;` means it discards. semantics should matter...
+#if defined(VEX_PLATFORM_WINDOWS) && !defined(__clang__)
+#define VEX_WEAK_SYMBOL __declspec(selectany)
+#else
+#define VEX_WEAK_SYMBOL __attribute__((weak))
+#endif
+
+/**
+ * Process-wide 32-byte-aligned tombstone target. Weak linkage coalesces every
+ * translation unit onto one canonical read-only address so all freed headers
+ * and poisoned pointers share a single FREED identity.
+ */
+extern alignas(32) const u8 VEX_FREED_SENTINEL[32];
+alignas(32) VEX_WEAK_SYMBOL const u8 VEX_FREED_SENTINEL[32] = { 0 };
+
+/**
+ * FREED definition: singleton tombstone pointer stamped into every freed
+ * MemoryHeader redirect and usable to poison released pointer variables.
+ */
+#define FREED        ((any) (pointer) VEX_FREED_SENTINEL)
+
+/**
+ * function named as is: the return spelling of a function that returns nothing,
+ * so a declaration reads as what it is. `fn` keeps its one other job, the
+ * `(discard) value;` means it discards. semantics should matter...
+ */
 typedef void         fn;
 typedef void         discard;
 
 
-// any function
+/** any function */
 typedef any          (*fnptr)(any);
 
 _Static_assert(sizeof(pointer) * 8   ==       VEX_ARCH_BITS,    "pointer must be one 64-bit word on the six-target floor");
 _Static_assert(sizeof(any) * 8       ==       VEX_ARCH_BITS,    "any must be one 64-bit word on the six-target floor");
 _Static_assert(sizeof(const_any) * 8 ==       VEX_ARCH_BITS,    "const_any must be one 64-bit word on the six-target floor");
 
-// `bytes` is the type `sizeof` yields — the one spelling for an object size:
-//
-//     bytes n = sizeof(*value);
-//
-// It is `bytes`, not `u64`: on the six-target floor both are 8 bytes, but only
-// `bytes` is what `sizeof`, `%zu`, `memcpy` and the C interfaces themselves
-// speak. A width-spelled size would be a cast at every seam.
-//
-// `bytes` is a TYPE, never a field name. A field says what it counts:
-//
-//     bytes count;      // number of elements
-//     bytes capacity;   // allocated slots
-//     bytes stride;     // bytes between records
-//     bytes offset;     // byte position in a buffer
-//     bytes padding;    // bytes inserted for alignment
-//     bytes alignment;  // required alignment
-//     bytes width;      // a dimension, in native pixels
-//     bytes height;
-//     bytes length;     // a byte count; the type carries the unit
-//
-// `padding` is alignment filler, never a synonym for object size.
+/**
+ * `bytes` is the type `sizeof` yields, the one spelling for an object size:
+ *
+ * bytes n = sizeof(*value);
+ *
+ * It is `bytes`, not `u64`: on the six-target floor both are 8 bytes, but only
+ * `bytes` is what `sizeof`, `%zu`, `memcpy` and the C interfaces themselves
+ * speak. A width-spelled size would be a cast at every seam.
+ *
+ * `bytes` is a TYPE, never a field name. A field says what it counts:
+ *
+ * bytes count;      // number of elements
+ * bytes capacity;   // allocated slots
+ * bytes stride;     // bytes between records
+ * bytes offset;     // byte position in a buffer
+ * bytes padding;    // bytes inserted for alignment
+ * bytes alignment;  // required alignment
+ * bytes width;      // a dimension, in native pixels
+ * bytes height;
+ * bytes length;     // a byte count; the type carries the unit
+ *
+ * `padding` is alignment filler and never a synonym for object size.
+ */
 typedef size_t          bytes;
 
-// `timestamp` is the portable C calendar time scalar (replacing `time_t`).
-// `thread` is the portable OS thread handle (`pthread_t` on POSIX, `any` /
-// Win32 HANDLE on Windows) without pulling `<windows.h>` into every file.
-// `ssize_t` is banned: use `bytes` for sizes/counts and `i64` at raw OS
-// syscall return boundaries (`read`, `write`, `send`, `recv`).
+/**
+ * `timestamp` is the portable C calendar time scalar (replacing `time_t`).
+ * `thread` is the portable OS thread handle (`pthread_t` on POSIX, `any` /
+ * Win32 HANDLE on Windows) without pulling `<windows.h>` into every file.
+ * `ssize_t` is banned: use `bytes` for sizes/counts and `i64` at raw OS
+ * syscall return boundaries (`read`, `write`, `send`, `recv`).
+ */
 typedef time_t          timestamp;
 
+
+/** thread managing... */
 #if defined(VEX_PLATFORM_WINDOWS)
 typedef any             thread;
 #else
@@ -93,20 +125,44 @@ typedef any             thread;
 typedef pthread_t       thread;
 #endif
 
+/**
+ * `utf8` is one UTF-8 code unit (one byte). Read-only text is `string`;
+ * bounded identifier slots are `variable`; character-limited encoded text is
+ * `varchar`. Mutable raw byte buffers stay `utf8 *` / `utf8 name[N]`.
+ * Because `utf8` aliases `char`, string literals and `_Generic` dispatch work
+ * without casts. Never spell `char`, `const char *`, or `const utf8 *` outside
+ * `lib/lang/primitive.h`.
+ */
+typedef char            utf8;
+_Static_assert(sizeof(utf8) == 1,                                   "utf8 must be one 8-bit code unit");
+
+/**
+ * `string` is an immutable NUL-terminated UTF-8 text pointer. Unlike pooled
+ * runtimes, `string` is never auto-interned; arena cloning lives in `re`
+ * (`string_clone` / `string_free`). Mutable raw byte buffers stay `utf8 *`.
+ */
+typedef const utf8     *string;
+_Static_assert(sizeof(string) * 8 == VEX_ARCH_BITS,                 "string must be one 64-bit word on the six-target floor");
+
+
 _Static_assert(_Generic((bytes) 0, bytes: 1, default: 0),          "bytes must be bytes, the type sizeof returns");
 _Static_assert(sizeof(bytes) == 8,                                  "bytes must be 64-bit on the six-target floor");
 
 
-// f32 and d64 are the floor: binary32 and binary64, 4 and 8 bytes on every
-// target we ship.
+/**
+ * f32 and d64 are the floor: binary32 and binary64, 4 and 8 bytes on every
+ * target we ship.
+ */
 typedef float           f32;
 typedef double          d64;
 
 
-// Atomic spellings: a = atomic, then the scalar spelling. The atomic form
-// carries the same width as its scalar on the six targets; the type is the
-// vocabulary, not a promise of lock-free arithmetic. Use atomic_load,
-// atomic_store, atomic_exchange and CAS for every one of them.
+/**
+ * Atomic spellings: a = atomic, then the scalar spelling. The atomic form
+ * carries the same width as its scalar on the six targets; the type is the
+ * vocabulary, not a promise of lock-free arithmetic. Use atomic_load,
+ * atomic_store, atomic_exchange and CAS for every one of them.
+ */
 typedef _Atomic i8  ai8;
 typedef _Atomic i16 ai16;
 typedef _Atomic i32 ai32;
@@ -132,22 +188,24 @@ _Static_assert(sizeof(af32) == 4, "af32 must be one 32-bit word");
 _Static_assert(sizeof(ad64) == 8, "ad64 must be one 64-bit word");
 
 
-// `b16` is bfloat16: 8-bit exponent, 7-bit mantissa, 2 bytes. It is NOT
-// `_Float16` — that is IEEE binary16, 5-bit exponent, 10-bit mantissa. Same
-// width, different type, and the difference is the whole point: bfloat16 keeps
-// f32's exponent range for AI quantisation, at the cost of mantissa bits.
-//
-// No compiler on the six-target floor ships bfloat16 as an arithmetic scalar:
-// Apple clang has `__bf16` but no feature macro to gate it (`__BFLT16_MAX__`
-// is undefined and `__has_extension(c_bfloat16)` is false), Windows/MSVC has
-// neither, and `_BFloat16` is not universal. So the floor carries the bit
-// pattern and converts explicitly:
-//
-//     b16 half = b16_from_f32(1.5f);
-//     f32 back = b16_to_f32(half);
-//
-// Rounding is round-to-nearest-even; NaN keeps its quiet bit and stays NaN.
-// Arithmetic is done in f32: b16 is a storage format, not a compute type.
+/**
+ * `b16` is bfloat16: 8-bit exponent, 7-bit mantissa, 2 bytes. It is NOT
+ * `_Float16`, that is IEEE binary16, 5-bit exponent, 10-bit mantissa. Same
+ * width, different type, and the difference is the whole point: bfloat16 keeps
+ * f32's exponent range for AI quantisation, at the cost of mantissa bits.
+ *
+ * No compiler on the six-target floor ships bfloat16 as an arithmetic scalar:
+ * Apple clang has `__bf16` but no feature macro to gate it (`__BFLT16_MAX__`
+ * is undefined and `__has_extension(c_bfloat16)` is false), Windows/MSVC has
+ * neither, and `_BFloat16` is not universal. So the floor carries the bit
+ * pattern and converts explicitly:
+ *
+ * b16 half = b16_from_f32(1.5f);
+ * f32 back = b16_to_f32(half);
+ *
+ * Rounding is round-to-nearest-even; NaN keeps its quiet bit and stays NaN.
+ * Arithmetic is done in f32: b16 is a storage format, not a compute type.
+ */
 typedef struct b16 { u16 bits; } b16;
 
 ;;GETTER
@@ -162,13 +220,15 @@ f32 b16_to_f32(b16 value);
 _Static_assert(sizeof(b16) == 2, "b16 must be 2 bytes: bfloat16 is a 16-bit format");
 
 
-// The two composite numeric values: 64 bits and 128 bits, nothing between.
-// The integer half is the truncation and the fraction is the signed remainder
-// in [-1, 1), so the pair is exact about magnitude and approximate about the
-// fractional tail. No 96-bit form exists: 32+64 and 64+32 only pad to 16 bytes.
-//
-// Rendering coordinates come from if64_toF32 / ld128_toD64; the floor's
-// vec/mat constructors consume those f32/d64 values.
+/**
+ * The two composite numeric values: 64 bits and 128 bits, nothing between.
+ * The integer half is the truncation and the fraction is the signed remainder
+ * in [-1, 1), so the pair is exact about magnitude and approximate about the
+ * fractional tail. No 96-bit form exists: 32+64 and 64+32 only pad to 16 bytes.
+ *
+ * Rendering coordinates come from if64_toF32 / ld128_toD64; the floor's
+ * vec/mat constructors consume those f32/d64 values.
+ */
 typedef struct if64 {
     _Alignas(8) i32 integer;
     f32 fraction;
@@ -178,9 +238,7 @@ _Static_assert(sizeof(if64) == 8,                   "if64 must be one 64-bit wor
 _Static_assert(_Alignof(if64) == 8,                 "if64 must align to 8 for a lock-free atomic form");
 _Static_assert(offsetof(if64, fraction) == 4,       "if64.fraction must sit at offset 4");
 
-//
-// same thing as the document below
-//
+/** same thing as the document below */
 typedef struct ld128 {
     i64 integer;
     d64 fraction;
@@ -190,11 +248,13 @@ _Static_assert(sizeof(ld128) == 16,                 "ld128 must be 128 bits");
 _Static_assert(_Alignof(ld128) == 8,                "ld128 must align to 8");
 _Static_assert(offsetof(ld128, fraction) == 8,      "ld128.fraction must sit at offset 8");
 
-// aif64 is one whole-word atomic: load/store/exchange/CAS move the pair as a
-// single value. ald128 is deliberately two independently atomic halves, not a
-// single 128-bit atomic: a reader may observe the halves from different
-// updates. Use aif64 when the pair must be indivisible, or publish an ld128
-// through an atomic pointer when a consistent snapshot is required.
+/**
+ * aif64 is one whole-word atomic: load/store/exchange/CAS move the pair as a
+ * single value. ald128 is deliberately two independently atomic halves, not a
+ * single 128-bit atomic: a reader may observe the halves from different
+ * updates. Use aif64 when the pair must be indivisible, or publish an ld128
+ * through an atomic pointer when a consistent snapshot is required.
+ */
 typedef _Atomic if64 aif64;
 
 typedef struct ald128 {
@@ -208,14 +268,12 @@ _Static_assert(sizeof(ald128) == 16,                "ald128 must be 128 bits");
 _Static_assert(_Alignof(ald128) == 8,               "ald128 must align to 8");
 
 if64 if64_0();
-if64 if64_1(const char *text);
+if64 if64_1(string text);
 if64 if64_2(i32 integer, f32 fraction);
 #define if64(...) CONSTRUCTOR_DISPATCH(if64, __VA_ARGS__)
 
 
-//
-// getters for this whole thing
-//
+/** getters for this whole thing */
 ;;GETTER
 i32 if64_integer(if64 self);
 
@@ -237,11 +295,11 @@ if64 if64_sub(if64 a, if64 b);
 if64 if64_neg(if64 self);
 i32  if64_compare(if64 a, if64 b);
 f32  if64_toF32Relative(if64 value, if64 origin);
-fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated);
-fn if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated);
+fn if64_toString(const if64 *value, utf8 *dest, bytes cap, bool *outTruncated);
+fn if64_toStringStruct(const if64 *value, utf8 *dest, bytes cap, bool *outTruncated);
 
 ld128 ld128_0();
-ld128 ld128_1(const char *text);
+ld128 ld128_1(string text);
 ld128 ld128_2(i64 integer, d64 fraction);
 #define ld128(...) CONSTRUCTOR_DISPATCH(ld128, __VA_ARGS__)
 
@@ -266,20 +324,22 @@ ld128 ld128_neg(ld128 self);
 i32   ld128_compare(ld128 a, ld128 b);
 f32   ld128_toF32Relative(ld128 value, ld128 origin);
 d64   ld128_toD64Relative(ld128 value, ld128 origin);
-fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
-fn ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated);
+fn ld128_toString(const ld128 *value, utf8 *dest, bytes cap, bool *outTruncated);
+fn ld128_toStringStruct(const ld128 *value, utf8 *dest, bytes cap, bool *outTruncated);
 
 
-// 128-bit widths are not in the six-target floor — MSVC has no __int128, and
-// Apple clang has no __float128 in the same spelling. GCC and clang have the
-// integer form; code that uses it states that dependency rather than pretending
-// it is portable.
+/**
+ * 128-bit widths are not in the six-target floor, MSVC has no __int128, and
+ * Apple clang has no __float128 in the same spelling. GCC and clang have the
+ * integer form; code that uses it states that dependency rather than pretending
+ * it is portable.
+ */
 #if defined(__SIZEOF_INT128__)
 typedef unsigned __int128 u128;
 typedef __int128          i128;
 #endif
 
-// constants that some might matter
+/** constants that some might matter */
 #define ZERO 0
 #define ONE 1
 #define ONE_THOUSAND 1'000

@@ -2,17 +2,70 @@
 #include "pair_parse.h"
 
 ;;DEFINITION
-;;OVERVIEW
+/**
+ * ============================================================================
+ * DEFINITION: PairParse
+ * ============================================================================
+ * Internal decimal and named-constant parser shared by if64_1 and ld128_1 in
+ * lib/lang. Splits decimal text into a bounded signed integer plus fractional
+ * remainder without heap allocation.
+ * ============================================================================
+ */
 
-static u8 pair_isSpace(const char c) {
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: PairParseResult (lib/lang/pair_parse.c)
+ * ============================================================================
+ * Output record produced by pair_parseText for if64 and ld128 construction.
+ *
+ * --FIELDS-------------------------------
+ * public   i64          integer           parsed signed integer part
+ * public   d64          fraction          parsed fractional remainder in (-1, 1)
+ * public   u8           nonFinite         1 when input was inf/infinity/nan
+ *
+ * --FUNCTIONS----------------------------
+ * public   pair_parseText(...)            parse decimal or named constant text
+ * private  pair_isSpace(...)              ASCII whitespace classifier
+ * private  pair_fold(...)                 ASCII lowercase fold
+ * private  pair_tokenEquals(...)          case-insensitive token compare
+ * private  pair_parseDecimal(...)         bounded decimal mantissa/exponent parser
+ * private  pair_parseConstant(...)        delegate named constant to decimal parser
+ *
+ * --SETTERS------------------------------
+ * private  PairParseResult_setInteger(...)   write parsed integer part
+ * private  PairParseResult_setFraction(...)  write parsed fraction part
+ * private  PairParseResult_setNonFinite(...) write non-finite flag
+ * ============================================================================
+ */
+
+;;SETTER
+static fn PairParseResult_setInteger(PairParseResult *self, i64 value)
+{
+    (*self).integer = value;
+}
+
+;;SETTER
+static fn PairParseResult_setFraction(PairParseResult *self, d64 value)
+{
+    (*self).fraction = value;
+}
+
+;;SETTER
+static fn PairParseResult_setNonFinite(PairParseResult *self, u8 value)
+{
+    (*self).nonFinite = value;
+}
+
+static u8 pair_isSpace(const utf8 c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v' || c == '\f';
 }
 
-static char pair_fold(const char c) {
-    return c >= 'A' && c <= 'Z' ? (char) (c + ('a' - 'A')) : c;
+static utf8 pair_fold(const utf8 c) {
+    return c >= 'A' && c <= 'Z' ? (utf8) (c + ('a' - 'A')) : c;
 }
 
-static u8 pair_tokenEquals(const char *begin, const char *end, const char *word) {
+static u8 pair_tokenEquals(string begin, string end, string word) {
     const bytes length =  end - begin;
     if (strlen(word) != length)
         return 0;
@@ -22,14 +75,14 @@ static u8 pair_tokenEquals(const char *begin, const char *end, const char *word)
     return 1;
 }
 
-static PairParseStatus pair_parseDecimal(const char *begin, const char *end,
+static PairParseStatus pair_parseDecimal(string begin, string end,
                                          u8 negative, i64 maxPositive,
                                          PairParseResult *out) {
-    char digits[64];
+    utf8 digits[64];
     bytes count = 0;
     i64 integerDigits = 0;
     u8 sawDigit = 0;
-    const char *cursor = begin;
+    string cursor = begin;
 
     while (cursor < end && *cursor >= '0' && *cursor <= '9') {
         sawDigit = 1;
@@ -77,9 +130,9 @@ static PairParseStatus pair_parseDecimal(const char *begin, const char *end,
     if (cursor != end)
         return PAIR_PARSE_MALFORMED;
 
-    (*out).integer = 0;
-    (*out).fraction = 0.0;
-    (*out).nonFinite = 0;
+    PairParseResult_setInteger(out, 0);
+    PairParseResult_setFraction(out, 0.0);
+    PairParseResult_setNonFinite(out, 0);
 
     if (count == 0)
         return PAIR_PARSE_OK;
@@ -128,37 +181,36 @@ static PairParseStatus pair_parseDecimal(const char *begin, const char *end,
     if (negative)
         fraction = -fraction;
 
-    if (!negative) {
-        (*out).integer = (i64) magnitude;
-    }
+    if (!negative)
+        PairParseResult_setInteger(out, (i64) magnitude);
     else if (magnitude == (u64) maxPositive + 1u) {
         if (maxPositive == INT64_MAX)
-            (*out).integer = INT64_MIN;
+            PairParseResult_setInteger(out, INT64_MIN);
         else
-            (*out).integer = -maxPositive - 1;
+            PairParseResult_setInteger(out, -maxPositive - 1);
     }
     else {
-        (*out).integer = -(i64) magnitude;
+        PairParseResult_setInteger(out, -(i64) magnitude);
     }
 
-    (*out).fraction = fraction;
+    PairParseResult_setFraction(out, fraction);
     return PAIR_PARSE_OK;
 }
 
-static PairParseStatus pair_parseConstant(const char *literal, u8 negative,
+static PairParseStatus pair_parseConstant(string literal, u8 negative,
                                           i64 maxPositive, PairParseResult *out) {
     return pair_parseDecimal(literal, literal + strlen(literal), negative, maxPositive, out);
 }
 
-PairParseStatus pair_parseText(const char *text, i64 maxPositive,
+PairParseStatus pair_parseText(string text, i64 maxPositive,
                                PairParseResult *out) {
-    (*out).integer = 0;
-    (*out).fraction = 0.0;
-    (*out).nonFinite = 0;
+    PairParseResult_setInteger(out, 0);
+    PairParseResult_setFraction(out, 0.0);
+    PairParseResult_setNonFinite(out, 0);
     if (text == nullptr)
         return PAIR_PARSE_MALFORMED;
 
-    const char *cursor = text;
+    string cursor = text;
     while (pair_isSpace(*cursor))
         cursor++;
 
@@ -168,11 +220,11 @@ PairParseStatus pair_parseText(const char *text, i64 maxPositive,
         cursor++;
     }
 
-    const char *begin = cursor;
-    const char *end = cursor;
+    string begin = cursor;
+    string end = cursor;
     while (*end != '\0' && !pair_isSpace(*end))
         end++;
-    const char *tail = end;
+    string tail = end;
     while (pair_isSpace(*tail))
         tail++;
     if (*tail != '\0' || begin == end)
@@ -189,9 +241,9 @@ PairParseStatus pair_parseText(const char *text, i64 maxPositive,
 
     if (pair_tokenEquals(begin, end, "inf") || pair_tokenEquals(begin, end, "infinity") ||
         pair_tokenEquals(begin, end, "nan")) {
-        (*out).integer = 0;
-        (*out).fraction = (d64) NAN;
-        (*out).nonFinite = 1;
+        PairParseResult_setInteger(out, 0);
+        PairParseResult_setFraction(out, (d64) NAN);
+        PairParseResult_setNonFinite(out, 1);
         return PAIR_PARSE_OK;
     }
 

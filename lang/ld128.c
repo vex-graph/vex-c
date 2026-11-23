@@ -5,7 +5,55 @@
 #include "pair_parse.h"
 
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: ld128
+ * ============================================================================
+ * 128-bit split fixed/floating composite number (64-bit signed integer plus
+ * d64 remainder in [-1, 1)) owned by lib/lang. Preserves exact 64-bit integer
+ * magnitude alongside double-precision fractional remainder.
+ * ============================================================================
+ */
+
 ;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: ld128 (lib/lang/ld128.c)
+ * ============================================================================
+ * 16-byte integer+fraction scalar pair with exact comparison and
+ * relative-to-origin f32/d64 projection.
+ *
+ * --FIELDS-------------------------------
+ * public   i64          integer           truncated signed 64-bit integer half
+ * public   d64          fraction          signed remainder in [-1, 1)
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   ld128_0()                      zeroed ld128 value
+ * public   ld128_1(...)                   parse decimal or constant text
+ * public   ld128_2(...)                   construct from integer and fraction
+ *
+ * --FUNCTIONS----------------------------
+ * public   ld128_toD64(...)               collapse pair to d64
+ * public   ld128_normalize(...)           carry overflow and normalize remainder
+ * public   ld128_fromD64(...)             build normalized pair from d64
+ * public   ld128_add(...)                 add two pairs with normalization
+ * public   ld128_sub(...)                 subtract two pairs with normalization
+ * public   ld128_neg(...)                 negate both halves
+ * public   ld128_compare(...)             exact total ordering (-1, 0, 1)
+ * public   ld128_toD64Relative(...)       d64 delta relative to an origin
+ * public   ld128_toF32Relative(...)       f32 delta relative to an origin
+ * public   ld128_toString(...)            value projection, cold path only
+ * public   ld128_toStringStruct(...)      structure projection, cold path only
+ *
+ * --GETTERS------------------------------
+ * public   ld128_integer(...)             read integer half by value
+ * public   ld128_fraction(...)            read fraction half by value
+ *
+ * --SETTERS------------------------------
+ * public   ld128_setInteger(...)          write integer half
+ * public   ld128_setFraction(...)         write fraction half
+ * ============================================================================
+ */
 
 ;;GETTER
 i64 ld128_integer(ld128 self) {
@@ -31,7 +79,7 @@ ld128 ld128_0() {
     return (ld128){ .integer = 0, .fraction = 0.0 };
 }
 
-ld128 ld128_1(const char *text) {
+ld128 ld128_1(string text) {
     PairParseResult parsed;
     PairParseStatus status = pair_parseText(text, INT64_MAX, &parsed);
     if (status != PAIR_PARSE_OK) {
@@ -110,10 +158,13 @@ ld128 ld128_neg(ld128 self) {
 
 i32 ld128_compare(ld128 a, ld128 b) {
     i64 ia = ld128_integer(a), ib = ld128_integer(b);
-    if (ia != ib) return (ia < ib) ? -1 : 1;
+    if (ia != ib)
+        return (ia < ib) ? -1 : 1;
     d64 fa = ld128_fraction(a), fb = ld128_fraction(b);
-    if (fa < fb) return -1;
-    if (fa > fb) return 1;
+    if (fa < fb)
+        return -1;
+    if (fa > fb)
+        return 1;
     return 0;
 }
 
@@ -127,7 +178,7 @@ f32 ld128_toF32Relative(ld128 value, ld128 origin) {
     return (f32) ld128_toD64Relative(value, origin);
 }
 
-fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
+fn ld128_toString(const ld128 *value, utf8 *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)
@@ -144,7 +195,7 @@ fn ld128_toString(const ld128 *value, char *dest, bytes cap, bool *outTruncated)
     }
 }
 
-fn ld128_toStringStruct(const ld128 *value, char *dest, bytes cap, bool *outTruncated) {
+fn ld128_toStringStruct(const ld128 *value, utf8 *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)

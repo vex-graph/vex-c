@@ -5,7 +5,55 @@
 #include "pair_parse.h"
 
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: if64
+ * ============================================================================
+ * 64-bit split fixed/floating composite number (32-bit signed integer plus
+ * f32 remainder in [-1, 1)) owned by lib/lang. Preserves exact integer
+ * magnitude alongside fractional precision for world coordinates.
+ * ============================================================================
+ */
+
 ;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: if64 (lib/lang/if64.c)
+ * ============================================================================
+ * 8-byte aligned integer+fraction scalar pair with exact comparison and
+ * relative-to-origin f32 projection.
+ *
+ * --FIELDS-------------------------------
+ * public   i32          integer           truncated signed integer half
+ * public   f32          fraction          signed remainder in [-1, 1)
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   if64_0()                       zeroed if64 value
+ * public   if64_1(...)                    parse decimal or constant text
+ * public   if64_2(...)                    construct from integer and fraction
+ *
+ * --FUNCTIONS----------------------------
+ * public   if64_toF32(...)                collapse pair to f32
+ * public   if64_normalize(...)            carry overflow and normalize remainder
+ * public   if64_fromF32(...)              build normalized pair from f32
+ * public   if64_fromD64(...)              build normalized pair from d64
+ * public   if64_add(...)                  add two pairs with normalization
+ * public   if64_sub(...)                  subtract two pairs with normalization
+ * public   if64_neg(...)                  negate both halves
+ * public   if64_compare(...)              exact total ordering (-1, 0, 1)
+ * public   if64_toF32Relative(...)        f32 delta relative to an origin
+ * public   if64_toString(...)             value projection, cold path only
+ * public   if64_toStringStruct(...)       structure projection, cold path only
+ *
+ * --GETTERS------------------------------
+ * public   if64_integer(...)              read integer half by value
+ * public   if64_fraction(...)             read fraction half by value
+ *
+ * --SETTERS------------------------------
+ * public   if64_setInteger(...)           write integer half
+ * public   if64_setFraction(...)          write fraction half
+ * ============================================================================
+ */
 
 ;;GETTER
 i32 if64_integer(if64 self) {
@@ -31,7 +79,7 @@ if64 if64_0() {
     return (if64){ .integer = 0, .fraction = 0.0f };
 }
 
-if64 if64_1(const char *text) {
+if64 if64_1(string text) {
     PairParseResult parsed;
     PairParseStatus status = pair_parseText(text, INT32_MAX, &parsed);
     if (status != PAIR_PARSE_OK) {
@@ -119,10 +167,13 @@ if64 if64_neg(if64 self) {
 
 i32 if64_compare(if64 a, if64 b) {
     i32 ia = if64_integer(a), ib = if64_integer(b);
-    if (ia != ib) return (ia < ib) ? -1 : 1;
+    if (ia != ib)
+        return (ia < ib) ? -1 : 1;
     f32 fa = if64_fraction(a), fb = if64_fraction(b);
-    if (fa < fb) return -1;
-    if (fa > fb) return 1;
+    if (fa < fb)
+        return -1;
+    if (fa > fb)
+        return 1;
     return 0;
 }
 
@@ -132,7 +183,7 @@ f32 if64_toF32Relative(if64 value, if64 origin) {
     return (f32) intDiff + fracDiff;
 }
 
-fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
+fn if64_toString(const if64 *value, utf8 *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)
@@ -149,7 +200,7 @@ fn if64_toString(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
     }
 }
 
-fn if64_toStringStruct(const if64 *value, char *dest, bytes cap, bool *outTruncated) {
+fn if64_toStringStruct(const if64 *value, utf8 *dest, bytes cap, bool *outTruncated) {
     if (outTruncated)
         *outTruncated = false;
     if (!dest || cap == 0u)
