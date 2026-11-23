@@ -1,4 +1,4 @@
-# lib — the vex-c floor
+# lib, the vex-c floor
 
 `lib` is **vex-c**: the bottom of the stack, checked out at `lib/` beside `vex/`
 in the repository tree. It owns the vocabulary every other repository speaks and
@@ -31,8 +31,8 @@ the whole standard system surface the floor uses.
 | `annotation.h` | every `;;MARKER` the Two-Semicolon Annotation Style Law names |
 | `lang/constructor.h` | arity-based `Class(...)` dispatch |
 | `lang/platform.h` | the six canonical platform targets and their coarse axes |
-| `lang/primitive.h` | `u8`..`i64`, `bytes` (`bytes`), `b16`, `f32`/`d64`, gated `u128` |
-| `lang/vex_string.h` | the 24-byte inline text type (`string`) and `chr("...")` |
+| `lang/primitive.h` | `u8`..`i64`, `bytes`, `utf8`, `string`, `b16`, `f32`/`d64`, gated `u128` |
+| `lang/varchar.h` | immutable character-bounded encoded text primitive (`varchar`, `TextFormat`); arena constructors live in `re` |
 | `vector/vector.h` | `vec2`/`vec3`/`vec4` at `b16`/`f32`/`d64`, accessors, constructors, arithmetic |
 | `matrix/matrix.h` | `mat2`/`mat3`/`mat4` at `f32`/`d64`, accessors, constructors, arithmetic |
 | `debug/test_support.h` | `B_TEST_SKIP` (77) for owner suites |
@@ -69,7 +69,7 @@ lib/
     throw.h                 # THROW(fmt, ...)
 ```
 
-Headers are include surfaces: types, layout assertions and declarations only —
+Headers are include surfaces: types, layout assertions and declarations only,
 function bodies live in the `.c` beside them, one shape per translation unit.
 
 Every accessor, constructor arity and arithmetic function is written out by
@@ -145,9 +145,10 @@ it is. `vexspoke` is R2 CPU behavior and is a different owner.
 - `.clangd` states that this tree is C23: without it, clangd falls back to
   Objective-C++, where `alignas` on an anonymous union member is ignored and
   the layout assertions report false failures.
-- `lang/vex_string.h` is the inline text vocabulary (`string`, `chr("...")`);
-  it ships both `toString` and `toStringStruct`. The vector and matrix
-  projections remain deferred.
+- `lang/primitive.h` owns immutable `string` (`string `); `lang/varchar.h`
+  owns the zero-alloc `varchar` / `TextFormat` primitive body (both `toString`
+  and `toStringStruct`), while `re` owns arena-backed constructors (`varchar(...)`,
+  `string_clone`). The vector and matrix projections remain deferred.
 
 ## Scope and Limitations
 

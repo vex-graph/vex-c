@@ -9,7 +9,7 @@
       "vexgraph"
     ],
     "publisher": "vexgraph",
-    "description": "Vex-C (lib): the zero-dependency floor — primitives, vectors, matrices, annotations, THROW, platform, constructors",
+    "description": "Vex-C (lib): the zero-dependency floor, primitives, vectors, matrices, annotations, THROW, platform, constructors",
     "license": "MIT",
     "homepage": "",
     "icon": ""
@@ -21,7 +21,8 @@
       "lang/if64.c",
       "lang/ld128.c",
       "lang/pair_parse.c",
-      "lang/vex_string.c",
+      "lang/varchar.c",
+      "lang/variable.c",
       "vector/vec2.c",
       "vector/vec3.c",
       "vector/vec4.c",

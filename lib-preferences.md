@@ -1,4 +1,4 @@
-# lib (vex-c) — Repo-Local Living Preferences
+# lib (vex-c), Repo-Local Living Preferences
 
 ## Constitution Link
 
@@ -11,7 +11,7 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 | Law Title | Scope | Enforcement |
 | **Floor Law** | dependency direction and ownership | no include leaves `lib`; dependency-free build |
 | **One Door Law** | every consumer include | `#include "vex.h"`, no `lib/` or `vex/` prefix |
-| **Primitive Vocabulary Law** | `lang/primitive.h`, `lang/vex_string.h`, `bytes`, `f32`/`d64` | static asserts in the owning test |
+| **Primitive Vocabulary Law** | `lang/primitive.h`, `lang/varchar.h`, `bytes`, `f32`/`d64` | static asserts in the owning test |
 | **Byte Size Law** | `bytes` is `sizeof` type, never a field name | field names say what they count |
 | **Math Header Split Law** | math headers | `lang/primitive.h`, `vector/vector.h`, `matrix/matrix.h`, `quaternion/quaternion.h`; one `.c` per shape; `_Generic` `vec_*` and `quat_*` shims over hand-written functions |
 | **Accessor Form Law** | getters and setters | `;;GETTER` / `;;SETTER` inventory |
@@ -36,7 +36,7 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 
 * The include is bare: `#include "vex.h"`.
 * `lib/` is an include root, so the spelling never carries `lib/`, `vex/`, or a relative hop.
-* `vex.h` is the one door: it includes the floor's headers by bare names (`"lang/primitive.h"`, `"lang/vex_string.h"`, `"annotation.h"`).
+* `vex.h` is the one door: it includes the floor's headers by bare names (`"lang/primitive.h"`, `"lang/varchar.h"`, `"annotation.h"`).
 * A consumer needs no second include for the floor.
 * No file includes a system header itself; `vex.h` batches them all, and a floor implementation file may add only its own internal headers after the door.
 * Two spellings of the same header are a defect.
@@ -48,7 +48,8 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 * Atomic spellings prefix the scalar with `a`: `ai8`..`ai64`, `au8`..`au64`, `af32`, `ad64`; the atomic form keeps the scalar's width and promises no particular lock-freedom.
 * `aif64` is one whole-word atomic pair; `ald128` is two independently atomic halves (`ai64` + `ad64`), never a single 128-bit atomic.
 * `int`, `long`, `long long` and the `stdint.h` names do not appear in new ecosystem source; the aliases are the only permitted spelling above this header.
-* `b16` is bfloat16 — 2 bytes, 8-bit exponent, 7-bit mantissa — carried as a bit pattern with `b16_from_f32`/`b16_to_f32`.
+* Text and identifier primitives are `string`, `variable` (23 chars + 1 NUL + 8-byte `pointer`), and `varchar`; mutable byte buffers stay `utf8 *` / `utf8 name[N]`; never spell `char`, `const char *`, `const utf8 *`, or `CharSequence` outside `lib/lang/primitive.h`.
+* `b16` is bfloat16, 2 bytes, 8-bit exponent, 7-bit mantissa, carried as a bit pattern with `b16_from_f32`/`b16_to_f32`.
 * `b16` is not `_Float16` (IEEE binary16).
 * `u128`/`i128` exist only when `__SIZEOF_INT128__` is defined; a target without them gets a compile error at the use site, never a silent wider substitute.
 * `bytes` is `bytes`, the type `sizeof` returns; it is the size type, not a fixed-width integer.
@@ -142,11 +143,11 @@ Tier: lifetime (floor). Owns: `vex.h` door, `lang/` scalar + string vocabulary, 
 
 ## Repo-Local Extensions
 
-* None — no managed exceptions to universal laws.
+* None, no managed exceptions to universal laws.
 
 ## Readiness Cross-Reference
 
 * Feature readiness: lib readiness gist.
 * Open blockers: ecosystem blockers gist.
-* Proof lawbook: `tests/test-preferences.md` — `./tools/prefs test "<title>"`.
-* Evidence ledger: `metadata/gists/test-checklist.md` — `python3 tools/test_checklist.py check`.
+* Proof lawbook: `tests/test-preferences.md`, `./tools/prefs test "<title>"`.
+* Evidence ledger: `metadata/gists/test-checklist.md`, `python3 tools/test_checklist.py check`.
