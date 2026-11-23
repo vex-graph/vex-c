@@ -1,6 +1,8 @@
-// lib_test.c — single-file automated owner suite for lib (primitives, string, vector, matrix, quaternion, print).
-// Run all: ./lib_test
-// Run one: ./lib_test primitive | string | vector | matrix | quaternion | print
+/**
+ * lib_test.c, single-file automated owner suite for lib (primitives, varchar, vector, matrix, quaternion, print).
+ * Run all: ./lib_test
+ * Run one: ./lib_test primitive | varchar | vector | matrix | quaternion | print
+ */
 
 #include "vex.h"
 
@@ -56,17 +58,24 @@ _Static_assert(sizeof(quat64) == 32 && _Alignof(quat64) == 32, "quat64 layout");
 
 static i32 failures;
 
-// Records a failed assertion without aborting the remaining suites.
-static fn check(i32 ok, const char *suite, const char *what) {
-    if (ok) return;
+/** Records a failed assertion without aborting the remaining suites. */
+static fn check(i32 ok, string suite, string what) {
+    if (ok)
+        return;
     fprint(stderr, "lib_test [", suite, "]: FAIL ", what);
     failures++;
 }
 
-static i32 near_f32(f32 a, f32 b) { return fabsf(a - b) < 1e-5f; }
-static i32 near_d64(d64 a, d64 b) { return fabs(a - b) < 1e-11; }
+static i32 near_f32(f32 a, f32 b)
+{
+    return fabsf(a - b) < 1e-5f;
+}
+static i32 near_d64(d64 a, d64 b)
+{
+    return fabs(a - b) < 1e-11;
+}
 
-// Proves b16 rounding/NaN, atomic scalar ops, and if64/ld128 parsing and math.
+/** Proves b16 rounding/NaN, atomic scalar ops, and if64/ld128 parsing and math. */
 static fn test_primitive() {
     union { f32 as_f32; u32 as_u32; } pun;
 
@@ -132,85 +141,174 @@ static fn test_primitive() {
     check(near_f32(ld128_toF32Relative(p1, p0), 0.125f), "primitive", "ld128_toF32Relative");
 }
 
-// Proves inline stack string construction, equality, append, overflow refusal, clear, and projections.
-static fn test_string() {
-    string empty = string();
-    check(string_len(&empty) == 0, "string", "empty len");
-    check(string_isEmpty(&empty), "string", "empty isEmpty");
-    check(string_len(nullptr) == 0 && string_isEmpty(nullptr) && string_data(nullptr) == nullptr, "string", "null guards");
+/**
+ * Compares two NUL-terminated UTF-8 strings for exact byte equality.
+ * @param a first string
+ * @param b second string
+ * @return true when both are non-null and have identical bytes
+ */
+static bool strEq(string a, string b)
+{
+    if (!a || !b)
+        return false;
 
-    const char *fits = "12345678901234567890123";
-    string packed = chr(fits);
-    check(string_len(&packed) == STRING_DATA_MAX && !string_isEmpty(&packed), "string", "exact capacity");
-    check(string_data(&packed) != nullptr && memcmp(string_data(&packed), fits, STRING_DATA_MAX) == 0, "string", "chr bytes");
+    bytes aLen = strlen(a);
+    bytes bLen = strlen(b);
 
-    string copied = string_1((const u8*) "hello", 5);
-    string literal = chr("hello");
-    check(string_equals(&copied, &literal) && string_len(&copied) == 5, "string", "string_1 equals chr");
-    check(!string_equals(&copied, &packed), "string", "different lengths");
-    check(!string_equals(nullptr, &copied) && !string_equals(&copied, nullptr) && !string_equals(nullptr, nullptr), "string", "null equality");
+    if (aLen != bLen)
+        return false;
 
-    string one = chr("a");
-    string two = chr("b");
-    check(!string_equals(&one, &two), "string", "same length different bytes");
-
-    string nullBytes = string_1(nullptr, 5);
-    string nullText = string_fromCString(nullptr);
-    check(string_len(&nullBytes) == 0 && string_len(&nullText) == 0, "string", "null constructors");
-
-    string greeting = chr("hello");
-    string world = chr(" world");
-    check(string_append(&greeting, &world) && string_len(&greeting) == 11, "string", "append");
-    check(memcmp(string_data(&greeting), "hello world", 11) == 0, "string", "append bytes");
-    check(string_append(&greeting, &empty) && string_len(&greeting) == 11, "string", "append empty");
-
-    check(!string_append(&greeting, &packed) && string_len(&greeting) == 11, "string", "append overflow refusal");
-    string overflowed = chr("123456789012345678901234");
-    string overflowedBytes = string_1((const u8*) "123456789012345678901234", 24);
-    check(string_len(&overflowed) == 0 && string_len(&overflowedBytes) == 0, "string", "constructor overflow refusal");
-
-    string cleared = chr("temp");
-    string_clear(&cleared);
-    check(string_len(&cleared) == 0 && string_isEmpty(&cleared), "string", "clear");
-    string_clear(nullptr);
-
-    char text[16];
-    bool truncated = true;
-    string_toString(&literal, text, sizeof text, &truncated);
-    check(strcmp(text, "hello") == 0 && !truncated, "string", "toString fits");
-
-    char tight[5];
-    truncated = false;
-    string_toString(&literal, tight, sizeof tight, &truncated);
-    check(strcmp(tight, "hell") == 0 && truncated, "string", "toString truncates");
-
-    truncated = false;
-    string_toString(nullptr, tight, sizeof tight, &truncated);
-    check(strcmp(tight, "null") == 0 && truncated, "string", "toString nullptr");
-
-    truncated = true;
-    string_toString(&literal, nullptr, 0, &truncated);
-    check(!truncated, "string", "toString zero dst");
-    string_toString(&literal, text, 0, &truncated);
-    check(!truncated, "string", "toString zero cap");
-
-    char structure[64];
-    truncated = false;
-    string_toStringStruct(&literal, structure, sizeof structure, &truncated);
-    check(strstr(structure, "data=\"hello\"") != nullptr && strstr(structure, "len=5") != nullptr && !truncated, "string", "toStringStruct");
-
-    char narrow[8];
-    truncated = false;
-    string_toStringStruct(&literal, narrow, sizeof narrow, &truncated);
-    check(truncated, "string", "toStringStruct truncates");
-
-    char tiny[4];
-    truncated = false;
-    string_toStringStruct(nullptr, tiny, sizeof tiny, &truncated);
-    check(truncated, "string", "toStringStruct nullptr");
+    return memcmp(a, b, aLen) == 0;
 }
 
-// Proves vec2/vec3/vec4 operations across b16, f32, d64, and _Generic dispatch.
+/**
+ * Checks whether a starts with the first n bytes of b.
+ * @param a haystack string
+ * @param b prefix string
+ * @param n byte count to compare
+ * @return true when a has at least n bytes matching b
+ */
+static bool strPrefixN(string a, string b, bytes n)
+{
+    if (!a || !b)
+        return false;
+
+    if (strlen(a) < n)
+        return false;
+
+    return memcmp(a, b, n) == 0;
+}
+
+/**
+ * Checks whether haystack contains needle.
+ * @param haystack string to search
+ * @param needle   substring to find
+ * @return true when needle occurs within haystack
+ */
+static bool strContains(string haystack, string needle)
+{
+    if (!haystack || !needle)
+        return false;
+
+    bytes hLen = strlen(haystack);
+    bytes nLen = strlen(needle);
+
+    if (nLen == 0u)
+        return true;
+
+    if (nLen > hLen)
+        return false;
+
+    for (bytes i = 0u; i <= hLen - nLen; i++)
+    {
+        if (memcmp(haystack + i, needle, nLen) == 0)
+            return true;
+    }
+
+    return false;
+}
+
+/** Proves immutable string pointer and floor varchar encoding, limit, conversion, equality, and projections. */
+static fn test_varchar()
+{
+    string hello = "hello world";
+    check(hello != nullptr && strlen(hello) == 11u, "varchar", "immutable string typedef");
+
+    check(TextFormat_isValid(FORMAT_UTF8) && strEq(TextFormat_name(FORMAT_UTF8), "UTF-8"), "varchar", "format utf8");
+    check(TextFormat_isValid(FORMAT_ASCII) && TextFormat_unitBytes(FORMAT_ASCII) == 1u, "varchar", "format ascii");
+    check(TextFormat_isValid(FORMAT_LATIN1) && strEq(TextFormat_name(FORMAT_LATIN1), "ISO-8859-1"), "varchar", "format latin1");
+    check(TextFormat_isValid(FORMAT_UTF16) && TextFormat_unitBytes(FORMAT_UTF16) == 2u, "varchar", "format utf16");
+    check(TextFormat_isValid(FORMAT_UTF32) && TextFormat_unitBytes(FORMAT_UTF32) == 4u, "varchar", "format utf32");
+    check(TextFormat_isValid(FORMAT_CESU8) && strEq(TextFormat_name(FORMAT_CESU8), "CESU-8"), "varchar", "format cesu8");
+    check(!TextFormat_isValid((TextFormat) 99) && TextFormat_unitBytes((TextFormat) 99) == 0u, "varchar", "format invalid");
+
+    check(varchar_limit(nullptr) == 0u && varchar_length(nullptr) == 0u && varchar_byteLength(nullptr) == 0u, "varchar", "null getters");
+    check(varchar_format(nullptr) == FORMAT_UTF8 && varchar_isEmpty(nullptr) && varchar_value(nullptr) == nullptr && varchar_string(nullptr) == nullptr, "varchar", "null getters extra");
+
+    alignas(8) u8 bufEmpty[64];
+    varchar empty = varchar_initUtf8Into(bufEmpty, sizeof(bufEmpty), 100u, nullptr, 0u, FORMAT_UTF8);
+    check(empty != nullptr && varchar_limit(empty) == 100u && varchar_length(empty) == 0u && varchar_byteLength(empty) == 0u && varchar_isEmpty(empty), "varchar", "empty init");
+
+    alignas(8) u8 bufHello[64];
+    varchar vHello = varchar_initUtf8Into(bufHello, sizeof(bufHello), 100u, hello, 11u, FORMAT_UTF8);
+    check(vHello != nullptr && varchar_limit(vHello) == 100u && varchar_length(vHello) == 11u && varchar_byteLength(vHello) == 11u, "varchar", "utf8 init");
+    check(varchar_string(vHello) != nullptr && strEq(varchar_string(vHello), "hello world"), "varchar", "utf8 string borrow");
+    check(varchar_equalsString(vHello, "hello world") && !varchar_equalsString(vHello, "hello"), "varchar", "equalsString");
+
+    string multi = "A\xC3\xA9\xE6\x97\xA5\xF0\x9F\x94\xA5";
+    bytes multiBytes = strlen(multi);
+    alignas(8) u8 bufUtf8[128];
+    varchar vUtf8 = varchar_initUtf8Into(bufUtf8, sizeof(bufUtf8), 4u, multi, multiBytes, FORMAT_UTF8);
+    check(vUtf8 != nullptr && varchar_limit(vUtf8) == 4u && varchar_length(vUtf8) == 4u && varchar_byteLength(vUtf8) == 10u, "varchar", "unicode char limit vs bytes");
+
+    alignas(8) u8 bufOverflow[128];
+    varchar vOver = varchar_initUtf8Into(bufOverflow, sizeof(bufOverflow), 3u, multi, multiBytes, FORMAT_UTF8);
+    check(vOver == nullptr, "varchar", "character limit overflow refusal");
+
+    alignas(8) u8 bufUtf16[128];
+    varchar vUtf16 = varchar_convertInto(vUtf8, FORMAT_UTF16, bufUtf16, sizeof(bufUtf16));
+    check(vUtf16 != nullptr && varchar_format(vUtf16) == FORMAT_UTF16 && varchar_limit(vUtf16) == 4u && varchar_length(vUtf16) == 4u && varchar_byteLength(vUtf16) == 10u, "varchar", "convert utf8 to utf16");
+    check(varchar_string(vUtf16) == nullptr, "varchar", "utf16 not borrowable as utf8 string");
+    check(!varchar_equals(vUtf8, vUtf16) && varchar_equalsCodePoints(vUtf8, vUtf16) && varchar_equalsString(vUtf16, multi), "varchar", "cross-format equality utf16");
+
+    alignas(8) u8 bufUtf32[128];
+    varchar vUtf32 = varchar_convertInto(vUtf16, FORMAT_UTF32, bufUtf32, sizeof(bufUtf32));
+    check(vUtf32 != nullptr && varchar_format(vUtf32) == FORMAT_UTF32 && varchar_length(vUtf32) == 4u && varchar_byteLength(vUtf32) == 16u, "varchar", "convert utf16 to utf32");
+    check(varchar_equalsCodePoints(vUtf8, vUtf32) && varchar_equalsString(vUtf32, multi), "varchar", "cross-format equality utf32");
+
+    alignas(8) u8 bufCesu[128];
+    varchar vCesu = varchar_convertInto(vUtf32, FORMAT_CESU8, bufCesu, sizeof(bufCesu));
+    check(vCesu != nullptr && varchar_format(vCesu) == FORMAT_CESU8 && varchar_length(vCesu) == 4u && varchar_byteLength(vCesu) == 12u, "varchar", "convert utf32 to cesu8");
+    check(varchar_equalsCodePoints(vUtf8, vCesu) && varchar_equalsString(vCesu, multi), "varchar", "cross-format equality cesu8");
+
+    alignas(8) u8 bufRoundTrip[128];
+    varchar vBack = varchar_convertInto(vCesu, FORMAT_UTF8, bufRoundTrip, sizeof(bufRoundTrip));
+    check(vBack != nullptr && varchar_equals(vUtf8, vBack), "varchar", "cesu8 to utf8 roundtrip");
+
+    string cafe = "caf\xC3\xA9";
+    alignas(8) u8 bufLatin[64];
+    varchar vLatin = varchar_initUtf8Into(bufLatin, sizeof(bufLatin), 10u, cafe, strlen(cafe), FORMAT_LATIN1);
+    check(vLatin != nullptr && varchar_length(vLatin) == 4u && varchar_byteLength(vLatin) == 4u && varchar_value(vLatin)[3] == 0xE9u, "varchar", "latin1 encode");
+    check(varchar_equalsString(vLatin, cafe), "varchar", "latin1 equalsString");
+
+    alignas(8) u8 bufBadAscii[64];
+    check(varchar_initUtf8Into(bufBadAscii, sizeof(bufBadAscii), 10u, cafe, strlen(cafe), FORMAT_ASCII) == nullptr, "varchar", "ascii rejects non-ascii");
+    check(varchar_initUtf8Into(bufBadAscii, sizeof(bufBadAscii), 10u, multi, multiBytes, FORMAT_LATIN1) == nullptr, "varchar", "latin1 rejects >U+00FF");
+
+    const u8 overlongUtf8[2] = { 0xC0u, 0xAFu };
+    check(varchar_initInto(bufBadAscii, sizeof(bufBadAscii), 10u, overlongUtf8, 2u, FORMAT_UTF8) == nullptr, "varchar", "utf8 rejects overlong");
+
+    const u8 loneSurrogateUtf16[2] = { 0x00u, 0xD8u };
+    check(varchar_initInto(bufBadAscii, sizeof(bufBadAscii), 10u, loneSurrogateUtf16, 2u, FORMAT_UTF16) == nullptr, "varchar", "utf16 rejects lone surrogate");
+
+    utf8 text[32];
+    bool truncated = true;
+    varchar_toString(vUtf16, text, sizeof(text), &truncated);
+    check(strEq(text, multi) && !truncated, "varchar", "toString utf16");
+
+    utf8 tight[5];
+    truncated = false;
+    varchar_toString(vUtf8, tight, sizeof(tight), &truncated);
+    check(strEq(tight, "A\xC3\xA9") && truncated, "varchar", "toString codepoint-safe truncation");
+
+    truncated = false;
+    varchar_toString(nullptr, tight, sizeof(tight), &truncated);
+    check(strEq(tight, "null") && truncated, "varchar", "toString nullptr");
+
+    utf8 structure[160];
+    truncated = false;
+    varchar_toStringStruct(vHello, structure, sizeof(structure), &truncated);
+    check(strContains(structure, "format=UTF-8") && strContains(structure, "limit=100") && strContains(structure, "length=11") && strContains(structure, "value=\"hello world\"") && !truncated, "varchar", "toStringStruct");
+
+    variable slot = {0};
+    check(sizeof(slot) == 32u && variable_isEmpty(&slot), "variable", "32-byte empty layout");
+    check(variable_init(&slot, "Hero.Pos_1", (pointer) 0x1234u), "variable", "fold and bind");
+    check(!variable_isEmpty(&slot) && strEq(variable_name(&slot), "hero.pos_1") && variable_pointer(&slot) == 0x1234u, "variable", "folded name and pointer");
+    check(variable_nameEquals(&slot, "HERO.POS_1") && !variable_nameEquals(&slot, "hero.pos_2"), "variable", "nameEquals case-folding");
+    check(!variable_setName(&slot, "123456789012345678901234"), "variable", "reject >23 chars");
+}
+
+/** Proves vec2/vec3/vec4 operations across b16, f32, d64, and _Generic dispatch. */
 static fn test_vector() {
     vec3f v = vec3f(1.0f, 2.0f, 3.0f);
     check(vec3f_x(v) == 1.0f && vec3f_y(v) == 2.0f && vec3f_z(v) == 3.0f && v.data[3] == 0.0f, "vector", "vec3f lanes");
@@ -274,7 +372,7 @@ static mat3f mat3f_from_rows(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g, f3
     return m;
 }
 
-// Proves mat2/mat3/mat4 accessors, constructors, multiplication, transpose, and determinant.
+/** Proves mat2/mat3/mat4 accessors, constructors, multiplication, transpose, and determinant. */
 static fn test_matrix() {
     mat3f id = mat3f_identity();
     check(mat3f_at(&id, 0, 0) == 1.0f && mat3f_at(&id, 1, 1) == 1.0f && mat3f_at(&id, 2, 2) == 1.0f, "matrix", "identity diag");
@@ -328,7 +426,7 @@ static fn test_matrix() {
     check(mat4f_at(&p4, 3, 3) == 1.0f && mat4f_at(&p4, 0, 3) == 0.0f && near_f32(mat4f_determinant(m4), 1.0f), "matrix", "mat4f identity");
 }
 
-// Proves quat32/quat64 identity, axis-angle rotation, inverse, composition, slerp, and mat3 conversion.
+/** Proves quat32/quat64 identity, axis-angle rotation, inverse, composition, slerp, and mat3 conversion. */
 static fn test_quaternion() {
     quat32 id32 = quat32();
     check(quat32_x(id32) == 0.0f && quat32_y(id32) == 0.0f && quat32_z(id32) == 0.0f && quat32_w(id32) == 1.0f, "quaternion", "quat32 identity");
@@ -360,9 +458,9 @@ static fn test_quaternion() {
     check(near_d64(vec3d_x(vy64), 0.0) && near_d64(vec3d_y(vy64), 1.0) && near_d64(vec3d_z(vy64), 0.0), "quaternion", "quat64 90 deg Z");
 }
 
-// Proves variadic print() across all vex-c floor primitives, math types, and truncation bounds.
+/** Proves variadic print() across all vex-c floor primitives, math types, and truncation bounds. */
 static fn test_print() {
-    char buf[256];
+    utf8 buf[256];
     const PrintArg scalars[] = {
         PRINT_WRAP("fps="), PRINT_WRAP((i32) 60),
         PRINT_WRAP(" b="), PRINT_WRAP((bytes) 4096u),
@@ -371,12 +469,15 @@ static fn test_print() {
         PRINT_WRAP(" no="), PRINT_WRAP(false)
     };
     bytes n = Print_concatArgs(buf, sizeof buf, scalars, sizeof scalars / sizeof scalars[0]);
-    check(n == strlen(buf) && strcmp(buf, "fps=60 b=4096 f=1.5 ok=true no=false") == 0,
+    check(n == strlen(buf) && strEq(buf, "fps=60 b=4096 f=1.5 ok=true no=false"),
           "print", "scalars bytes b16 bools");
 
-    string tag = chr("vex");
+    string tag = "vex";
+    alignas(8) u8 vbuf[64];
+    varchar vtag = varchar_initUtf8Into(vbuf, sizeof(vbuf), 16u, "ok", 2u, FORMAT_UTF16);
     const PrintArg composites[] = {
         PRINT_WRAP("tag="), PRINT_WRAP(tag),
+        PRINT_WRAP(" v="), PRINT_WRAP(vtag),
         PRINT_WRAP(" vb="), PRINT_WRAP(vec3b_from_vec3f(vec3f(1.0f, 2.0f, 3.0f))),
         PRINT_WRAP(" m="), PRINT_WRAP(mat2f_identity()),
         PRINT_WRAP(" q="), PRINT_WRAP(quat32()),
@@ -385,8 +486,8 @@ static fn test_print() {
     };
     n = Print_concatArgs(buf, sizeof buf, composites, sizeof composites / sizeof composites[0]);
     check(n == strlen(buf) &&
-          strcmp(buf, "tag=vex vb=(1, 2, 3) m=[[1, 0], [0, 1]] q=(0, 0, 0, 1) p=if64(integer=1, fraction=0.5) n=null") == 0,
-          "print", "string vec3b mat2f quat32 if64 nullptr");
+          strEq(buf, "tag=vex v=ok vb=(1, 2, 3) m=[[1, 0], [0, 1]] q=(0, 0, 0, 1) p=if64(integer=1, fraction=0.5) n=null"),
+          "print", "string varchar vec3b mat2f quat32 if64 nullptr");
 
 #if defined(__SIZEOF_INT128__)
     const PrintArg wide[] = {
@@ -395,47 +496,47 @@ static fn test_print() {
     };
     n = Print_concatArgs(buf, sizeof buf, wide, sizeof wide / sizeof wide[0]);
     check(n == strlen(buf) &&
-          strcmp(buf, "i128=-1234567890123456789 u128=9876543210987654321") == 0,
+          strEq(buf, "i128=-1234567890123456789 u128=9876543210987654321"),
           "print", "i128 u128");
 #endif
 
     i32 local = 7;
     const PrintArg ptrArg[] = { PRINT_WRAP("ptr="), PRINT_WRAP(&local) };
     n = Print_concatArgs(buf, sizeof buf, ptrArg, 2u);
-    check(n > 4u && strncmp(buf, "ptr=0x", 6u) == 0, "print", "generic pointer");
+    check(n > 4u && strPrefixN(buf, "ptr=0x", 6u), "print", "generic pointer");
 
     n = Print_concatArgs(buf, sizeof buf, nullptr, 0u);
     check(n == 0u && buf[0] == '\0', "print", "zero args");
 
-    char tiny[8];
+    utf8 tiny[8];
     const PrintArg truncArgs[] = { PRINT_WRAP("hello"), PRINT_WRAP(" "), PRINT_WRAP("world") };
     n = Print_concatArgs(tiny, sizeof tiny, truncArgs, 3u);
-    check(n == 7u && strcmp(tiny, "hello w") == 0, "print", "truncation safety");
+    check(n == 7u && strEq(tiny, "hello w"), "print", "truncation safety");
 
-    print("lib_test print smoke: ", chr("ok"), " ", (bytes) 64u, " ", vec2b_from_vec2f(vec2f(1.0f, 2.0f)), " ", mat2f_identity(), " ", true);
+    print("lib_test print smoke: ", vtag, " ", (bytes) 64u, " ", vec2b_from_vec2f(vec2f(1.0f, 2.0f)), " ", mat2f_identity(), " ", true);
     print();
 }
 
-// Runs all lib suites, or only the named suite when argv[1] is passed.
-i32 main(i32 argc, char **argv) {
-    const char *filter = argc > 1 ? argv[1] : nullptr;
+/** Runs all lib suites, or only the named suite when argv[1] is passed. */
+i32 main(i32 argc, utf8 **argv) {
+    string filter = argc > 1 ? argv[1] : nullptr;
 
-    if (!filter || strcmp(filter, "primitive") == 0)
+    if (!filter || strEq(filter, "primitive"))
         test_primitive();
 
-    if (!filter || strcmp(filter, "string") == 0)
-        test_string();
+    if (!filter || strEq(filter, "varchar") || strEq(filter, "string") || strEq(filter, "variable"))
+        test_varchar();
 
-    if (!filter || strcmp(filter, "vector") == 0)
+    if (!filter || strEq(filter, "vector"))
         test_vector();
 
-    if (!filter || strcmp(filter, "matrix") == 0)
+    if (!filter || strEq(filter, "matrix"))
         test_matrix();
 
-    if (!filter || strcmp(filter, "quaternion") == 0)
+    if (!filter || strEq(filter, "quaternion"))
         test_quaternion();
 
-    if (!filter || strcmp(filter, "print") == 0)
+    if (!filter || strEq(filter, "print"))
         test_print();
 
     if (failures != 0) {

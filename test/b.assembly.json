@@ -22,7 +22,8 @@
       "../lang/if64.c",
       "../lang/ld128.c",
       "../lang/pair_parse.c",
-      "../lang/vex_string.c",
+      "../lang/varchar.c",
+      "../lang/variable.c",
       "../vector/vec2.c",
       "../vector/vec3.c",
       "../vector/vec4.c",
@@ -30,7 +31,8 @@
       "../matrix/mat3.c",
       "../matrix/mat4.c",
       "../quaternion/quat32.c",
-      "../quaternion/quat64.c"
+      "../quaternion/quat64.c",
+      "../debug/print.c"
     ],
     "includes": [
       ".",
