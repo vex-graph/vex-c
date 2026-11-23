@@ -1,38 +1,99 @@
-// quat64.c — 64-bit double quaternion (4 x d64, 32 bytes).
+/** quat64.c, 64-bit double quaternion (4 x d64, 32 bytes). */
 
 #include "vex.h"
 #include "quaternion/quaternion.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: quat64
+ * ============================================================================
+ * 64-bit double quaternion (4 x d64, 32 bytes) owned by lib/quaternion for
+ * high-precision 3D rotations, slerp interpolation, and mat3d/mat4d conversion.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: quat64 (lib/quaternion/quat64.c)
+ * ============================================================================
+ * 32-byte unit-rotation quaternion (x, y, z, w) in d64 precision.
+ *
+ * --FIELDS-------------------------------
+ * public   d64          x, y, z, w        imaginary vector and real scalar
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   quat64_0 / quat64_2 / quat64_4 identity, axis-angle, explicit xyzw
+ * public   quat64_identity / fromAxisAngle named identity and axis-angle builders
+ *
+ * --FUNCTIONS----------------------------
+ * public   quat64_mul / conjugate / dot   Hamilton product, conjugate, dot product
+ * public   quat64_length / normalize      norm and unit normalization
+ * public   quat64_inverse / rotateVec3    multiplicative inverse and 3D rotation
+ * public   quat64_slerp                   spherical linear interpolation
+ * public   quat64_toMat3 / toMat4         rotation matrix projections
+ * public   quat64_to_quat32               narrow to f32 quaternion
+ *
+ * --GETTERS------------------------------
+ * public   quat64_x / y / z / w           component readers
+ *
+ * --SETTERS------------------------------
+ * public   quat64_setX / setY / setZ / setW component writers
+ * ============================================================================
+ */
+
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
-d64 quat64_x(quat64 self) { return self.x; }
+d64 quat64_x(quat64 self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn quat64_setX(quat64 *self, d64 value) { (*self).x = value; }
+fn quat64_setX(quat64 *self, d64 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-d64 quat64_y(quat64 self) { return self.y; }
+d64 quat64_y(quat64 self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn quat64_setY(quat64 *self, d64 value) { (*self).y = value; }
+fn quat64_setY(quat64 *self, d64 value)
+{
+    (*self).y = value;
+}
 
 ;;GETTER
-d64 quat64_z(quat64 self) { return self.z; }
+d64 quat64_z(quat64 self)
+{
+    return self.z;
+}
 
 ;;SETTER
-fn quat64_setZ(quat64 *self, d64 value) { (*self).z = value; }
+fn quat64_setZ(quat64 *self, d64 value)
+{
+    (*self).z = value;
+}
 
 ;;GETTER
-d64 quat64_w(quat64 self) { return self.w; }
+d64 quat64_w(quat64 self)
+{
+    return self.w;
+}
 
 ;;SETTER
-fn quat64_setW(quat64 *self, d64 value) { (*self).w = value; }
+fn quat64_setW(quat64 *self, d64 value)
+{
+    (*self).w = value;
+}
 
-// ---------------------------------------------------------------- constructors
+/** ---------------------------------------------------------------- constructors */
 
 quat64 quat64_4(d64 x, d64 y, d64 z, d64 w) {
     quat64 q = { 0 };
@@ -63,7 +124,7 @@ quat64 quat64_2(vec3d axis, d64 radians) {
     return quat64_fromAxisAngle(axis, radians);
 }
 
-// ---------------------------------------------------------------- operations
+/** ---------------------------------------------------------------- operations */
 
 quat64 quat64_mul(quat64 a, quat64 b) {
     d64 ax = quat64_x(a), ay = quat64_y(a), az = quat64_z(a), aw = quat64_w(a);
@@ -93,7 +154,8 @@ d64 quat64_length(quat64 self) {
 
 quat64 quat64_normalize(quat64 self) {
     d64 len = quat64_length(self);
-    if (len == 0.0) return quat64_0();
+    if (len == 0.0)
+        return quat64_0();
     d64 inv = 1.0 / len;
     return quat64_4(
         quat64_x(self) * inv,
@@ -105,7 +167,8 @@ quat64 quat64_normalize(quat64 self) {
 
 quat64 quat64_inverse(quat64 self) {
     d64 d = quat64_dot(self, self);
-    if (d == 0.0) return quat64_0();
+    if (d == 0.0)
+        return quat64_0();
     d64 inv = 1.0 / d;
     quat64 c = quat64_conjugate(self);
     return quat64_4(

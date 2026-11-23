@@ -1,38 +1,99 @@
-// quat32.c — 32-bit float quaternion (4 x f32, 16 bytes).
+/** quat32.c, 32-bit float quaternion (4 x f32, 16 bytes). */
 
 #include "vex.h"
 #include "quaternion/quaternion.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: quat32
+ * ============================================================================
+ * 32-bit float quaternion (4 x f32, 16 bytes) owned by lib/quaternion for 3D
+ * rotations, slerp interpolation, and mat3f/mat4f conversion.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: quat32 (lib/quaternion/quat32.c)
+ * ============================================================================
+ * 16-byte unit-rotation quaternion (x, y, z, w) in f32 precision.
+ *
+ * --FIELDS-------------------------------
+ * public   f32          x, y, z, w        imaginary vector and real scalar
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   quat32_0 / quat32_2 / quat32_4 identity, axis-angle, explicit xyzw
+ * public   quat32_identity / fromAxisAngle named identity and axis-angle builders
+ *
+ * --FUNCTIONS----------------------------
+ * public   quat32_mul / conjugate / dot   Hamilton product, conjugate, dot product
+ * public   quat32_length / normalize      norm and unit normalization
+ * public   quat32_inverse / rotateVec3    multiplicative inverse and 3D rotation
+ * public   quat32_slerp                   spherical linear interpolation
+ * public   quat32_toMat3 / toMat4         rotation matrix projections
+ * public   quat32_to_quat64               widen to d64 quaternion
+ *
+ * --GETTERS------------------------------
+ * public   quat32_x / y / z / w           component readers
+ *
+ * --SETTERS------------------------------
+ * public   quat32_setX / setY / setZ / setW component writers
+ * ============================================================================
+ */
+
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
-f32 quat32_x(quat32 self) { return self.x; }
+f32 quat32_x(quat32 self)
+{
+    return self.x;
+}
 
 ;;SETTER
-fn quat32_setX(quat32 *self, f32 value) { (*self).x = value; }
+fn quat32_setX(quat32 *self, f32 value)
+{
+    (*self).x = value;
+}
 
 ;;GETTER
-f32 quat32_y(quat32 self) { return self.y; }
+f32 quat32_y(quat32 self)
+{
+    return self.y;
+}
 
 ;;SETTER
-fn quat32_setY(quat32 *self, f32 value) { (*self).y = value; }
+fn quat32_setY(quat32 *self, f32 value)
+{
+    (*self).y = value;
+}
 
 ;;GETTER
-f32 quat32_z(quat32 self) { return self.z; }
+f32 quat32_z(quat32 self)
+{
+    return self.z;
+}
 
 ;;SETTER
-fn quat32_setZ(quat32 *self, f32 value) { (*self).z = value; }
+fn quat32_setZ(quat32 *self, f32 value)
+{
+    (*self).z = value;
+}
 
 ;;GETTER
-f32 quat32_w(quat32 self) { return self.w; }
+f32 quat32_w(quat32 self)
+{
+    return self.w;
+}
 
 ;;SETTER
-fn quat32_setW(quat32 *self, f32 value) { (*self).w = value; }
+fn quat32_setW(quat32 *self, f32 value)
+{
+    (*self).w = value;
+}
 
-// ---------------------------------------------------------------- constructors
+/** ---------------------------------------------------------------- constructors */
 
 quat32 quat32_4(f32 x, f32 y, f32 z, f32 w) {
     quat32 q = { 0 };
@@ -63,7 +124,7 @@ quat32 quat32_2(vec3f axis, f32 radians) {
     return quat32_fromAxisAngle(axis, radians);
 }
 
-// ---------------------------------------------------------------- operations
+/** ---------------------------------------------------------------- operations */
 
 quat32 quat32_mul(quat32 a, quat32 b) {
     f32 ax = quat32_x(a), ay = quat32_y(a), az = quat32_z(a), aw = quat32_w(a);
@@ -93,7 +154,8 @@ f32 quat32_length(quat32 self) {
 
 quat32 quat32_normalize(quat32 self) {
     f32 len = quat32_length(self);
-    if (len == 0.0f) return quat32_0();
+    if (len == 0.0f)
+        return quat32_0();
     f32 inv = 1.0f / len;
     return quat32_4(
         quat32_x(self) * inv,
@@ -105,7 +167,8 @@ quat32 quat32_normalize(quat32 self) {
 
 quat32 quat32_inverse(quat32 self) {
     f32 d = quat32_dot(self, self);
-    if (d == 0.0f) return quat32_0();
+    if (d == 0.0f)
+        return quat32_0();
     f32 inv = 1.0f / d;
     quat32 c = quat32_conjugate(self);
     return quat32_4(
