@@ -1,16 +1,53 @@
-// mat4.c — mat4f and mat4d.
-//
-// One shape, two widths, one translation unit. A mat4 column is a vec4, so the
-// flat data stride is four lanes and the storage is the plain 4x4 case every
-// other matrix matches.
+/**
+ * mat4.c, mat4f and mat4d.
+ *
+ * One shape, two widths, one translation unit. A mat4 column is a vec4, so the
+ * flat data stride is four lanes and the storage is the plain 4x4 case every
+ * other matrix matches.
+ */
 
 #include "vex.h"
 #include "matrix.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: mat4
+ * ============================================================================
+ * Column-major 4x4 matrix value types (mat4f and mat4d) owned by lib/matrix.
+ * Stores four vec4 columns; every arithmetic operation goes through accessors.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: mat4f / mat4d (lib/matrix/mat4.c)
+ * ============================================================================
+ * 4x4 column-major floating-point matrices in 32-bit (mat4f) and 64-bit (mat4d).
+ *
+ * --FIELDS-------------------------------
+ * public   vec4f/vec4d  col[4]            column vectors (column-major)
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   mat4f_0 / mat4f_1 / mat4f_4    zero, diagonal scalar, four columns
+ * public   mat4d_0 / mat4d_1 / mat4d_4    zero, diagonal scalar, four columns
+ * public   mat4f_identity / mat4d_identity identity matrix
+ *
+ * --FUNCTIONS----------------------------
+ * public   mat4*_add / sub / scale        component-wise matrix arithmetic
+ * public   mat4*_multiply / multiplyVec   matrix-matrix and matrix-vector product
+ * public   mat4*_transpose / determinant  transpose and 4x4 determinant
+ *
+ * --GETTERS------------------------------
+ * public   mat4*_at / mat4*_col           element and column readers
+ *
+ * --SETTERS------------------------------
+ * public   mat4*_setAt / mat4*_setCol     element and column writers
+ * ============================================================================
+ */
+
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
 f32 mat4f_at(const mat4f *self, u32 row, u32 col) {
@@ -20,16 +57,22 @@ f32 mat4f_at(const mat4f *self, u32 row, u32 col) {
 
 ;;SETTER
 fn mat4f_setAt(mat4f *self, u32 row, u32 col, f32 value) {
-    vec4f column = (*self).col[col];
+    vec4f column = mat4f_col(self, col);
     column.data[row] = value;
     (*self).col[col] = column;
 }
 
 ;;GETTER
-vec4f mat4f_col(const mat4f *self, u32 col) { return (*self).col[col]; }
+vec4f mat4f_col(const mat4f *self, u32 col)
+{
+    return (*self).col[col];
+}
 
 ;;SETTER
-fn mat4f_setCol(mat4f *self, u32 col, vec4f value) { (*self).col[col] = value; }
+fn mat4f_setCol(mat4f *self, u32 col, vec4f value)
+{
+    (*self).col[col] = value;
+}
 
 ;;GETTER
 d64 mat4d_at(const mat4d *self, u32 row, u32 col) {
@@ -39,20 +82,29 @@ d64 mat4d_at(const mat4d *self, u32 row, u32 col) {
 
 ;;SETTER
 fn mat4d_setAt(mat4d *self, u32 row, u32 col, d64 value) {
-    vec4d column = (*self).col[col];
+    vec4d column = mat4d_col(self, col);
     column.data[row] = value;
     (*self).col[col] = column;
 }
 
 ;;GETTER
-vec4d mat4d_col(const mat4d *self, u32 col) { return (*self).col[col]; }
+vec4d mat4d_col(const mat4d *self, u32 col)
+{
+    return (*self).col[col];
+}
 
 ;;SETTER
-fn mat4d_setCol(mat4d *self, u32 col, vec4d value) { (*self).col[col] = value; }
+fn mat4d_setCol(mat4d *self, u32 col, vec4d value)
+{
+    (*self).col[col] = value;
+}
 
-// ---------------------------------------------------------------- constructors
+/** ---------------------------------------------------------------- constructors */
 
-mat4f mat4f_0() { return (mat4f) { 0 }; }
+mat4f mat4f_0()
+{
+    return (mat4f) { 0 };
+}
 
 mat4f mat4f_1(f32 scalar) {
     mat4f m = mat4f_0();
@@ -72,9 +124,15 @@ mat4f mat4f_4(vec4f c0, vec4f c1, vec4f c2, vec4f c3) {
     return m;
 }
 
-mat4f mat4f_identity() { return mat4f_1(1.0f); }
+mat4f mat4f_identity()
+{
+    return mat4f_1(1.0f);
+}
 
-mat4d mat4d_0() { return (mat4d) { 0 }; }
+mat4d mat4d_0()
+{
+    return (mat4d) { 0 };
+}
 
 mat4d mat4d_1(d64 scalar) {
     mat4d m = mat4d_0();
@@ -94,16 +152,18 @@ mat4d mat4d_4(vec4d c0, vec4d c1, vec4d c2, vec4d c3) {
     return m;
 }
 
-mat4d mat4d_identity() { return mat4d_1(1.0); }
+mat4d mat4d_identity()
+{
+    return mat4d_1(1.0);
+}
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
 mat4f mat4f_add(mat4f a, mat4f b) {
     mat4f out = mat4f_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4f_setAt(&out, row, col, mat4f_at(&a, row, col) + mat4f_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -111,9 +171,8 @@ mat4f mat4f_add(mat4f a, mat4f b) {
 mat4f mat4f_sub(mat4f a, mat4f b) {
     mat4f out = mat4f_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4f_setAt(&out, row, col, mat4f_at(&a, row, col) - mat4f_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -121,9 +180,8 @@ mat4f mat4f_sub(mat4f a, mat4f b) {
 mat4f mat4f_scale(mat4f a, f32 scalar) {
     mat4f out = mat4f_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4f_setAt(&out, row, col, mat4f_at(&a, row, col) * scalar);
-        }
     }
     return out;
 }
@@ -133,9 +191,8 @@ mat4f mat4f_multiply(mat4f a, mat4f b) {
     for (u32 col = 0; col < 4; col++) {
         for (u32 row = 0; row < 4; row++) {
             f32 sum = 0.0f;
-            for (u32 k = 0; k < 4; k++) {
+            for (u32 k = 0; k < 4; k++)
                 sum += mat4f_at(&a, row, k) * mat4f_at(&b, k, col);
-            }
             mat4f_setAt(&out, row, col, sum);
         }
     }
@@ -153,9 +210,8 @@ vec4f mat4f_multiplyVec(mat4f a, vec4f v) {
 mat4f mat4f_transpose(mat4f a) {
     mat4f out = mat4f_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4f_setAt(&out, row, col, mat4f_at(&a, col, row));
-        }
     }
     return out;
 }
@@ -186,9 +242,8 @@ f32 mat4f_determinant(mat4f a) {
 mat4d mat4d_add(mat4d a, mat4d b) {
     mat4d out = mat4d_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4d_setAt(&out, row, col, mat4d_at(&a, row, col) + mat4d_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -196,9 +251,8 @@ mat4d mat4d_add(mat4d a, mat4d b) {
 mat4d mat4d_sub(mat4d a, mat4d b) {
     mat4d out = mat4d_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4d_setAt(&out, row, col, mat4d_at(&a, row, col) - mat4d_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -206,9 +260,8 @@ mat4d mat4d_sub(mat4d a, mat4d b) {
 mat4d mat4d_scale(mat4d a, d64 scalar) {
     mat4d out = mat4d_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4d_setAt(&out, row, col, mat4d_at(&a, row, col) * scalar);
-        }
     }
     return out;
 }
@@ -218,9 +271,8 @@ mat4d mat4d_multiply(mat4d a, mat4d b) {
     for (u32 col = 0; col < 4; col++) {
         for (u32 row = 0; row < 4; row++) {
             d64 sum = 0.0;
-            for (u32 k = 0; k < 4; k++) {
+            for (u32 k = 0; k < 4; k++)
                 sum += mat4d_at(&a, row, k) * mat4d_at(&b, k, col);
-            }
             mat4d_setAt(&out, row, col, sum);
         }
     }
@@ -238,9 +290,8 @@ vec4d mat4d_multiplyVec(mat4d a, vec4d v) {
 mat4d mat4d_transpose(mat4d a) {
     mat4d out = mat4d_0();
     for (u32 col = 0; col < 4; col++) {
-        for (u32 row = 0; row < 4; row++) {
+        for (u32 row = 0; row < 4; row++)
             mat4d_setAt(&out, row, col, mat4d_at(&a, col, row));
-        }
     }
     return out;
 }

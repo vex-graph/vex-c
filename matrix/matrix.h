@@ -1,36 +1,38 @@
 #ifndef VEXC_MATRIX_H
 #define VEXC_MATRIX_H
 
-// matrix.h — the matrix value types of the floor.
-//
-// The third and last math header: primitive.h (scalars), vector.h
-// (vec2/vec3/vec4) and matrix.h (mat2/mat3/mat4). A matrix composes the
-// vectors; it does not re-own their geometry.
-//
-// Storage is column-major and flat. A matrix is its columns and nothing else:
-//
-//     mat2   vec2 columns, 2 columns   size = 2 * sizeof(vec2)
-//     mat3   vec3 columns, 3 columns   size = 3 * sizeof(vec3)
-//     mat4   vec4 columns, 4 columns   size = 4 * sizeof(vec4)
-//
-// A vec3 column carries the zeroed fourth lane the Vector Layout Law already
-// pins, so a mat3f column is 16 bytes at 16-byte alignment and every column is
-// one 128-bit load. `data[]` is the flat seam: mat3 data has a column stride of
-// four lanes, so entry (row, col) lives at data[col * 4 + row].
-//
-// This is the include surface: types, layout assertions and declarations. The
-// bodies live beside it, one shape per translation unit:
-//
-//     matrix/mat2.c   mat2f, mat2d
-//     matrix/mat3.c   mat3f, mat3d
-//     matrix/mat4.c   mat4f, mat4d
-//
-//     mat3f m = mat3f_1(1.0f);          // diagonal
-//     f32   a = mat3f_at(&m, 0, 1);
-//     mat3f_setAt(&m, 2, 2, 7.0f);
+/**
+ * matrix.h, the matrix value types of the floor.
+ *
+ * The third and last math header: primitive.h (scalars), vector.h
+ * (vec2/vec3/vec4) and matrix.h (mat2/mat3/mat4). A matrix composes the
+ * vectors; it does not re-own their geometry.
+ *
+ * Storage is column-major and flat. A matrix is its columns and nothing else:
+ *
+ * mat2   vec2 columns, 2 columns   size = 2 * sizeof(vec2)
+ * mat3   vec3 columns, 3 columns   size = 3 * sizeof(vec3)
+ * mat4   vec4 columns, 4 columns   size = 4 * sizeof(vec4)
+ *
+ * A vec3 column carries the zeroed fourth lane the Vector Layout Law already
+ * pins, so a mat3f column is 16 bytes at 16-byte alignment and every column is
+ * one 128-bit load. `data[]` is the flat seam: mat3 data has a column stride of
+ * four lanes, so entry (row, col) lives at data[col * 4 + row].
+ *
+ * This is the include surface: types, layout assertions and declarations. The
+ * bodies live beside it, one shape per translation unit:
+ *
+ * matrix/mat2.c   mat2f, mat2d
+ * matrix/mat3.c   mat3f, mat3d
+ * matrix/mat4.c   mat4f, mat4d
+ *
+ * mat3f m = mat3f_1(1.0f);          // diagonal
+ * f32   a = mat3f_at(&m, 0, 1);
+ * mat3f_setAt(&m, 2, 2, 7.0f);
+ */
 
 
-// ---------------------------------------------------------------- mat2
+/** ---------------------------------------------------------------- mat2 */
 
 #include "vector/vector.h"
 
@@ -48,7 +50,7 @@ typedef struct mat2d {
     };
 } mat2d;
 
-// ---------------------------------------------------------------- mat3
+/** ---------------------------------------------------------------- mat3 */
 
 typedef struct mat3f {
     union {
@@ -64,7 +66,7 @@ typedef struct mat3d {
     };
 } mat3d;
 
-// ---------------------------------------------------------------- mat4
+/** ---------------------------------------------------------------- mat4 */
 
 typedef struct mat4f {
     union {
@@ -80,7 +82,7 @@ typedef struct mat4d {
     };
 } mat4d;
 
-// The layout rule, checked rather than described.
+/** The layout rule, checked rather than described. */
 
 _Static_assert(sizeof(mat2f) == 2 * sizeof(vec2f), "mat2f: two vec2f columns");
 _Static_assert(sizeof(mat2d) == 2 * sizeof(vec2d), "mat2d: two vec2d columns");
@@ -99,7 +101,7 @@ _Static_assert(_Alignof(mat4d) == _Alignof(vec4d), "mat4d inherits vec4d alignme
 _Static_assert(sizeof(mat3f) / sizeof(f32) == 12, "mat3f data seam is 12 lanes");
 _Static_assert(sizeof(mat3d) / sizeof(d64) == 12, "mat3d data seam is 12 lanes");
 
-// ---------------------------------------------------------------- mat2 accessors
+/** ---------------------------------------------------------------- mat2 accessors */
 
 ;;GETTER
 f32 mat2f_at(const mat2f *self, u32 row, u32 col);
@@ -125,7 +127,7 @@ vec2d mat2d_col(const mat2d *self, u32 col);
 ;;SETTER
 fn mat2d_setCol(mat2d *self, u32 col, vec2d value);
 
-// ---------------------------------------------------------------- mat3 accessors
+/** ---------------------------------------------------------------- mat3 accessors */
 
 ;;GETTER
 f32 mat3f_at(const mat3f *self, u32 row, u32 col);
@@ -151,7 +153,7 @@ vec3d mat3d_col(const mat3d *self, u32 col);
 ;;SETTER
 fn mat3d_setCol(mat3d *self, u32 col, vec3d value);
 
-// ---------------------------------------------------------------- mat4 accessors
+/** ---------------------------------------------------------------- mat4 accessors */
 
 ;;GETTER
 f32 mat4f_at(const mat4f *self, u32 row, u32 col);
@@ -177,7 +179,7 @@ vec4d mat4d_col(const mat4d *self, u32 col);
 ;;SETTER
 fn mat4d_setCol(mat4d *self, u32 col, vec4d value);
 
-// ---------------------------------------------------------------- mat2 constructors
+/** ---------------------------------------------------------------- mat2 constructors */
 
 mat2f mat2f_0();
 mat2f mat2f_1(f32 scalar);
@@ -189,7 +191,7 @@ mat2d mat2d_1(d64 scalar);
 mat2d mat2d_2(vec2d c0, vec2d c1);
 mat2d mat2d_identity();
 
-// ---------------------------------------------------------------- mat3 constructors
+/** ---------------------------------------------------------------- mat3 constructors */
 
 mat3f mat3f_0();
 mat3f mat3f_1(f32 scalar);
@@ -201,7 +203,7 @@ mat3d mat3d_1(d64 scalar);
 mat3d mat3d_3(vec3d c0, vec3d c1, vec3d c2);
 mat3d mat3d_identity();
 
-// ---------------------------------------------------------------- mat4 constructors
+/** ---------------------------------------------------------------- mat4 constructors */
 
 mat4f mat4f_0();
 mat4f mat4f_1(f32 scalar);
@@ -213,7 +215,7 @@ mat4d mat4d_1(d64 scalar);
 mat4d mat4d_4(vec4d c0, vec4d c1, vec4d c2, vec4d c3);
 mat4d mat4d_identity();
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
 mat2f mat2f_add(mat2f a, mat2f b);
 mat2f mat2f_sub(mat2f a, mat2f b);
@@ -263,7 +265,7 @@ vec4d mat4d_multiplyVec(mat4d a, vec4d v);
 mat4d mat4d_transpose(mat4d a);
 d64   mat4d_determinant(mat4d a);
 
-// ---------------------------------------------------------------- dispatch
+/** ---------------------------------------------------------------- dispatch */
 
 #define mat2f(...) CONSTRUCTOR_DISPATCH(mat2f, __VA_ARGS__)
 #define mat2d(...) CONSTRUCTOR_DISPATCH(mat2d, __VA_ARGS__)

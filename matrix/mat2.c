@@ -1,15 +1,52 @@
-// mat2.c — mat2f and mat2d.
-//
-// One shape, two widths, one translation unit. Storage is column-major; every
-// arithmetic function reaches it through the accessors declared in matrix.h.
+/**
+ * mat2.c, mat2f and mat2d.
+ *
+ * One shape, two widths, one translation unit. Storage is column-major; every
+ * arithmetic function reaches it through the accessors declared in matrix.h.
+ */
 
 #include "vex.h"
 #include "matrix/matrix.h"
 
-;;OVERVIEW
 ;;DEFINITION
+/**
+ * ============================================================================
+ * DEFINITION: mat2
+ * ============================================================================
+ * Column-major 2x2 matrix value types (mat2f and mat2d) owned by lib/matrix.
+ * Stores two vec2 columns; every arithmetic operation goes through accessors.
+ * ============================================================================
+ */
 
-// ---------------------------------------------------------------- accessors
+;;OVERVIEW
+/**
+ * ============================================================================
+ * CLASS: mat2f / mat2d (lib/matrix/mat2.c)
+ * ============================================================================
+ * 2x2 column-major floating-point matrices in 32-bit (mat2f) and 64-bit (mat2d).
+ *
+ * --FIELDS-------------------------------
+ * public   vec2f/vec2d  col[2]            column vectors (column-major)
+ *
+ * --CONSTRUCTORS-------------------------
+ * public   mat2f_0 / mat2f_1 / mat2f_2    zero, diagonal scalar, column pair
+ * public   mat2d_0 / mat2d_1 / mat2d_2    zero, diagonal scalar, column pair
+ * public   mat2f_identity / mat2d_identity identity matrix
+ *
+ * --FUNCTIONS----------------------------
+ * public   mat2*_add / sub / scale        component-wise matrix arithmetic
+ * public   mat2*_multiply / multiplyVec   matrix-matrix and matrix-vector product
+ * public   mat2*_transpose / determinant  transpose and 2x2 determinant
+ *
+ * --GETTERS------------------------------
+ * public   mat2*_at / mat2*_col           element and column readers
+ *
+ * --SETTERS------------------------------
+ * public   mat2*_setAt / mat2*_setCol     element and column writers
+ * ============================================================================
+ */
+
+/** ---------------------------------------------------------------- accessors */
 
 ;;GETTER
 f32 mat2f_at(const mat2f *self, u32 row, u32 col) {
@@ -19,16 +56,22 @@ f32 mat2f_at(const mat2f *self, u32 row, u32 col) {
 
 ;;SETTER
 fn mat2f_setAt(mat2f *self, u32 row, u32 col, f32 value) {
-    vec2f column = (*self).col[col];
+    vec2f column = mat2f_col(self, col);
     column.data[row] = value;
     (*self).col[col] = column;
 }
 
 ;;GETTER
-vec2f mat2f_col(const mat2f *self, u32 col) { return (*self).col[col]; }
+vec2f mat2f_col(const mat2f *self, u32 col)
+{
+    return (*self).col[col];
+}
 
 ;;SETTER
-fn mat2f_setCol(mat2f *self, u32 col, vec2f value) { (*self).col[col] = value; }
+fn mat2f_setCol(mat2f *self, u32 col, vec2f value)
+{
+    (*self).col[col] = value;
+}
 
 ;;GETTER
 d64 mat2d_at(const mat2d *self, u32 row, u32 col) {
@@ -38,20 +81,29 @@ d64 mat2d_at(const mat2d *self, u32 row, u32 col) {
 
 ;;SETTER
 fn mat2d_setAt(mat2d *self, u32 row, u32 col, d64 value) {
-    vec2d column = (*self).col[col];
+    vec2d column = mat2d_col(self, col);
     column.data[row] = value;
     (*self).col[col] = column;
 }
 
 ;;GETTER
-vec2d mat2d_col(const mat2d *self, u32 col) { return (*self).col[col]; }
+vec2d mat2d_col(const mat2d *self, u32 col)
+{
+    return (*self).col[col];
+}
 
 ;;SETTER
-fn mat2d_setCol(mat2d *self, u32 col, vec2d value) { (*self).col[col] = value; }
+fn mat2d_setCol(mat2d *self, u32 col, vec2d value)
+{
+    (*self).col[col] = value;
+}
 
-// ---------------------------------------------------------------- constructors
+/** ---------------------------------------------------------------- constructors */
 
-mat2f mat2f_0() { return (mat2f) { 0 }; }
+mat2f mat2f_0()
+{
+    return (mat2f) { 0 };
+}
 
 mat2f mat2f_1(f32 scalar) {
     mat2f m = mat2f_0();
@@ -67,9 +119,15 @@ mat2f mat2f_2(vec2f c0, vec2f c1) {
     return m;
 }
 
-mat2f mat2f_identity() { return mat2f_1(1.0f); }
+mat2f mat2f_identity()
+{
+    return mat2f_1(1.0f);
+}
 
-mat2d mat2d_0() { return (mat2d) { 0 }; }
+mat2d mat2d_0()
+{
+    return (mat2d) { 0 };
+}
 
 mat2d mat2d_1(d64 scalar) {
     mat2d m = mat2d_0();
@@ -85,16 +143,18 @@ mat2d mat2d_2(vec2d c0, vec2d c1) {
     return m;
 }
 
-mat2d mat2d_identity() { return mat2d_1(1.0); }
+mat2d mat2d_identity()
+{
+    return mat2d_1(1.0);
+}
 
-// ---------------------------------------------------------------- arithmetic
+/** ---------------------------------------------------------------- arithmetic */
 
 mat2f mat2f_add(mat2f a, mat2f b) {
     mat2f out = mat2f_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2f_setAt(&out, row, col, mat2f_at(&a, row, col) + mat2f_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -102,9 +162,8 @@ mat2f mat2f_add(mat2f a, mat2f b) {
 mat2f mat2f_sub(mat2f a, mat2f b) {
     mat2f out = mat2f_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2f_setAt(&out, row, col, mat2f_at(&a, row, col) - mat2f_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -112,9 +171,8 @@ mat2f mat2f_sub(mat2f a, mat2f b) {
 mat2f mat2f_scale(mat2f a, f32 scalar) {
     mat2f out = mat2f_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2f_setAt(&out, row, col, mat2f_at(&a, row, col) * scalar);
-        }
     }
     return out;
 }
@@ -124,9 +182,8 @@ mat2f mat2f_multiply(mat2f a, mat2f b) {
     for (u32 col = 0; col < 2; col++) {
         for (u32 row = 0; row < 2; row++) {
             f32 sum = 0.0f;
-            for (u32 k = 0; k < 2; k++) {
+            for (u32 k = 0; k < 2; k++)
                 sum += mat2f_at(&a, row, k) * mat2f_at(&b, k, col);
-            }
             mat2f_setAt(&out, row, col, sum);
         }
     }
@@ -141,9 +198,8 @@ vec2f mat2f_multiplyVec(mat2f a, vec2f v) {
 mat2f mat2f_transpose(mat2f a) {
     mat2f out = mat2f_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2f_setAt(&out, row, col, mat2f_at(&a, col, row));
-        }
     }
     return out;
 }
@@ -156,9 +212,8 @@ f32 mat2f_determinant(mat2f a) {
 mat2d mat2d_add(mat2d a, mat2d b) {
     mat2d out = mat2d_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2d_setAt(&out, row, col, mat2d_at(&a, row, col) + mat2d_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -166,9 +221,8 @@ mat2d mat2d_add(mat2d a, mat2d b) {
 mat2d mat2d_sub(mat2d a, mat2d b) {
     mat2d out = mat2d_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2d_setAt(&out, row, col, mat2d_at(&a, row, col) - mat2d_at(&b, row, col));
-        }
     }
     return out;
 }
@@ -176,9 +230,8 @@ mat2d mat2d_sub(mat2d a, mat2d b) {
 mat2d mat2d_scale(mat2d a, d64 scalar) {
     mat2d out = mat2d_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2d_setAt(&out, row, col, mat2d_at(&a, row, col) * scalar);
-        }
     }
     return out;
 }
@@ -188,9 +241,8 @@ mat2d mat2d_multiply(mat2d a, mat2d b) {
     for (u32 col = 0; col < 2; col++) {
         for (u32 row = 0; row < 2; row++) {
             d64 sum = 0.0;
-            for (u32 k = 0; k < 2; k++) {
+            for (u32 k = 0; k < 2; k++)
                 sum += mat2d_at(&a, row, k) * mat2d_at(&b, k, col);
-            }
             mat2d_setAt(&out, row, col, sum);
         }
     }
@@ -205,9 +257,8 @@ vec2d mat2d_multiplyVec(mat2d a, vec2d v) {
 mat2d mat2d_transpose(mat2d a) {
     mat2d out = mat2d_0();
     for (u32 col = 0; col < 2; col++) {
-        for (u32 row = 0; row < 2; row++) {
+        for (u32 row = 0; row < 2; row++)
             mat2d_setAt(&out, row, col, mat2d_at(&a, col, row));
-        }
     }
     return out;
 }
