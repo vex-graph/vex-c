@@ -252,9 +252,19 @@ vec3f vec3f_cross(vec3f a, vec3f b) {
                    vec3f_x(a) * vec3f_y(b) - vec3f_y(a) * vec3f_x(b));
 }
 
+/**
+ * Returns the squared Euclidean length of a 3D f32 vector.
+ * @param self input vector
+ * @return squared length (dot(self, self))
+ */
+f32 vec3f_lengthSquared(vec3f self)
+{
+    return vec3f_dot(self, self);
+}
+
 f32 vec3f_length(vec3f self)
 {
-    return sqrtf(vec3f_dot(self, self));
+    return sqrtf(vec3f_lengthSquared(self));
 }
 
 vec3f vec3f_normalize(vec3f self) {
@@ -294,9 +304,19 @@ vec3d vec3d_cross(vec3d a, vec3d b) {
                    vec3d_x(a) * vec3d_y(b) - vec3d_y(a) * vec3d_x(b));
 }
 
+/**
+ * Returns the squared Euclidean length of a 3D d64 vector.
+ * @param self input vector
+ * @return squared length (dot(self, self))
+ */
+d64 vec3d_lengthSquared(vec3d self)
+{
+    return vec3d_dot(self, self);
+}
+
 d64 vec3d_length(vec3d self)
 {
-    return sqrt(vec3d_dot(self, self));
+    return sqrt(vec3d_lengthSquared(self));
 }
 
 vec3d vec3d_normalize(vec3d self) {

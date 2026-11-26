@@ -287,9 +287,19 @@ f32 vec4f_dot(vec4f a, vec4f b) {
          + vec4f_z(a) * vec4f_z(b) + vec4f_w(a) * vec4f_w(b);
 }
 
+/**
+ * Returns the squared Euclidean length of a 4D f32 vector.
+ * @param self input vector
+ * @return squared length (dot(self, self))
+ */
+f32 vec4f_lengthSquared(vec4f self)
+{
+    return vec4f_dot(self, self);
+}
+
 f32 vec4f_length(vec4f self)
 {
-    return sqrtf(vec4f_dot(self, self));
+    return sqrtf(vec4f_lengthSquared(self));
 }
 
 vec4f vec4f_normalize(vec4f self) {
@@ -323,9 +333,19 @@ d64 vec4d_dot(vec4d a, vec4d b) {
          + vec4d_z(a) * vec4d_z(b) + vec4d_w(a) * vec4d_w(b);
 }
 
+/**
+ * Returns the squared Euclidean length of a 4D d64 vector.
+ * @param self input vector
+ * @return squared length (dot(self, self))
+ */
+d64 vec4d_lengthSquared(vec4d self)
+{
+    return vec4d_dot(self, self);
+}
+
 d64 vec4d_length(vec4d self)
 {
-    return sqrt(vec4d_dot(self, self));
+    return sqrt(vec4d_lengthSquared(self));
 }
 
 vec4d vec4d_normalize(vec4d self) {

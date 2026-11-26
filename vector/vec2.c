@@ -200,9 +200,19 @@ f32 vec2f_dot(vec2f a, vec2f b) {
     return vec2f_x(a) * vec2f_x(b) + vec2f_y(a) * vec2f_y(b);
 }
 
+/**
+ * Returns the squared Euclidean length of a 2D f32 vector.
+ * @param self input vector
+ * @return squared length (dot(self, self))
+ */
+f32 vec2f_lengthSquared(vec2f self)
+{
+    return vec2f_dot(self, self);
+}
+
 f32 vec2f_length(vec2f self)
 {
-    return sqrtf(vec2f_dot(self, self));
+    return sqrtf(vec2f_lengthSquared(self));
 }
 
 vec2f vec2f_normalize(vec2f self) {
@@ -232,9 +242,19 @@ d64 vec2d_dot(vec2d a, vec2d b) {
     return vec2d_x(a) * vec2d_x(b) + vec2d_y(a) * vec2d_y(b);
 }
 
+/**
+ * Returns the squared Euclidean length of a 2D d64 vector.
+ * @param self input vector
+ * @return squared length (dot(self, self))
+ */
+d64 vec2d_lengthSquared(vec2d self)
+{
+    return vec2d_dot(self, self);
+}
+
 d64 vec2d_length(vec2d self)
 {
-    return sqrt(vec2d_dot(self, self));
+    return sqrt(vec2d_lengthSquared(self));
 }
 
 vec2d vec2d_normalize(vec2d self) {

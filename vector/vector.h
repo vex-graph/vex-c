@@ -362,6 +362,7 @@ vec2f vec2f_sub(vec2f a, vec2f b);
 vec2f vec2f_neg(vec2f a);
 vec2f vec2f_scale(vec2f a, f32 scalar);
 f32   vec2f_dot(vec2f a, vec2f b);
+f32   vec2f_lengthSquared(vec2f self);
 f32   vec2f_length(vec2f self);
 vec2f vec2f_normalize(vec2f self);
 
@@ -370,6 +371,7 @@ vec2d vec2d_sub(vec2d a, vec2d b);
 vec2d vec2d_neg(vec2d a);
 vec2d vec2d_scale(vec2d a, d64 scalar);
 d64   vec2d_dot(vec2d a, vec2d b);
+d64   vec2d_lengthSquared(vec2d self);
 d64   vec2d_length(vec2d self);
 vec2d vec2d_normalize(vec2d self);
 
@@ -379,6 +381,7 @@ vec3f vec3f_neg(vec3f a);
 vec3f vec3f_scale(vec3f a, f32 scalar);
 f32   vec3f_dot(vec3f a, vec3f b);
 vec3f vec3f_cross(vec3f a, vec3f b);
+f32   vec3f_lengthSquared(vec3f self);
 f32   vec3f_length(vec3f self);
 vec3f vec3f_normalize(vec3f self);
 
@@ -388,6 +391,7 @@ vec3d vec3d_neg(vec3d a);
 vec3d vec3d_scale(vec3d a, d64 scalar);
 d64   vec3d_dot(vec3d a, vec3d b);
 vec3d vec3d_cross(vec3d a, vec3d b);
+d64   vec3d_lengthSquared(vec3d self);
 d64   vec3d_length(vec3d self);
 vec3d vec3d_normalize(vec3d self);
 
@@ -396,6 +400,7 @@ vec4f vec4f_sub(vec4f a, vec4f b);
 vec4f vec4f_neg(vec4f a);
 vec4f vec4f_scale(vec4f a, f32 scalar);
 f32   vec4f_dot(vec4f a, vec4f b);
+f32   vec4f_lengthSquared(vec4f self);
 f32   vec4f_length(vec4f self);
 vec4f vec4f_normalize(vec4f self);
 
@@ -404,6 +409,7 @@ vec4d vec4d_sub(vec4d a, vec4d b);
 vec4d vec4d_neg(vec4d a);
 vec4d vec4d_scale(vec4d a, d64 scalar);
 d64   vec4d_dot(vec4d a, vec4d b);
+d64   vec4d_lengthSquared(vec4d self);
 d64   vec4d_length(vec4d self);
 vec4d vec4d_normalize(vec4d self);
 
@@ -436,6 +442,15 @@ vec4b vec4b_from_vec4f(vec4f a);
 #define vec4b(...) CONSTRUCTOR_DISPATCH(vec4b, __VA_ARGS__)
 #define vec4f(...) CONSTRUCTOR_DISPATCH(vec4f, __VA_ARGS__)
 #define vec4d(...) CONSTRUCTOR_DISPATCH(vec4d, __VA_ARGS__)
+
+#define VEC3_X_VECTOR vec3(1, 0, 0)
+#define VEC3_Y_VECTOR vec3(0, 1, 0)
+#define VEC3_Z_VECTOR vec3(0, 0, 1)
+
+#define VEC4_X_VECTOR vec4(1, 0, 0, 0)
+#define VEC4_Y_VECTOR vec4(0, 1, 0, 0)
+#define VEC4_Z_VECTOR vec4(0, 0, 1, 0)
+#define VEC4_W_VECTOR vec4(0, 0, 0, 1)
 
 /** ---------------------------------------------------------------- generic dispatch */
 
@@ -488,6 +503,15 @@ vec4b vec4b_from_vec4f(vec4f a);
     vec3f: vec3f_cross, \
     vec3d: vec3d_cross  \
 )(a, b)
+
+#define vec_lengthSquared(a) _Generic((a), \
+    vec2f: vec2f_lengthSquared, \
+    vec2d: vec2d_lengthSquared, \
+    vec3f: vec3f_lengthSquared, \
+    vec3d: vec3d_lengthSquared, \
+    vec4f: vec4f_lengthSquared, \
+    vec4d: vec4d_lengthSquared  \
+)(a)
 
 #define vec_length(a) _Generic((a), \
     vec2f: vec2f_length, \
