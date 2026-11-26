@@ -141,7 +141,8 @@ _Static_assert(sizeof(utf8) == 1,                                   "utf8 must b
  * runtimes, `string` is never auto-interned; arena cloning lives in `re`
  * (`string_clone` / `string_free`). Mutable raw byte buffers stay `utf8 *`.
  */
-typedef const utf8     *string;
+typedef const utf8      *string;
+
 _Static_assert(sizeof(string) * 8 == VEX_ARCH_BITS,                 "string must be one 64-bit word on the six-target floor");
 
 
@@ -192,7 +193,7 @@ _Static_assert(sizeof(ad64) == 8, "ad64 must be one 64-bit word");
  * `b16` is bfloat16: 8-bit exponent, 7-bit mantissa, 2 bytes. It is NOT
  * `_Float16`, that is IEEE binary16, 5-bit exponent, 10-bit mantissa. Same
  * width, different type, and the difference is the whole point: bfloat16 keeps
- * f32's exponent range for AI quantisation, at the cost of mantissa bits.
+ * f32's exponent range for AI quantization, at the cost of mantissa bits.
  *
  * No compiler on the six-target floor ships bfloat16 as an arithmetic scalar:
  * Apple clang has `__bf16` but no feature macro to gate it (`__BFLT16_MAX__`
@@ -340,6 +341,13 @@ typedef __int128          i128;
 #endif
 
 /** constants that some might matter */
+#if !defined(__OBJC__)
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#define null {}
+#else
+#define null { 0 }
+#endif
+#endif
 #define ZERO 0
 #define ONE 1
 #define ONE_THOUSAND 1'000

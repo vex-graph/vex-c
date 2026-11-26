@@ -13,6 +13,11 @@
  * companion to a graphics validation layer. It is not `;;DEBUG`: that name is
  * unusable because platform headers test `#if DEBUG`.
  *
+ * `;;SEGFAULT(reason)` marks a function or site that intentionally triggers a
+ * segmentation fault (for example, a PROT_NONE guard-page tripwire or crash
+ * isolation worker). It is not `;;SIGSEGV`: that name collides with
+ * `<signal.h>` defining `#define SIGSEGV 11`.
+ *
  * Rust mirror: relational-engine/rust/annotations/lib.rs carries the fifteen
  * shared markers with the same arity (`#[overview]` for `;;OVERVIEW`, and so
  * on). C additionally owns CLASSNAME, DECONSTRUCT, FINAL and WIDGET_LAYERS,
@@ -32,8 +37,10 @@
 #define INCOMPLETE                      _Static_assert(1, "@Incomplete");
 #define INHERITS(class_)                _Static_assert(1, "@Inherits(" class_ ")");
 #define INTENTION(comment)              _Static_assert(1, "@Intention(" comment ")");
+#define LAYERS                          _Static_assert(1, "@Layers");
 #define OVERVIEW                        _Static_assert(1, "@Overview");
 #define PLATFORM_EXCLUSIVE(platform)    _Static_assert(1, "@PlatformExclusive(" platform ")");
+#define SEGFAULT(reason)                _Static_assert(1, "@Segfault(" reason ")");
 #define SETTER                          _Static_assert(1, "@Setter");
 #define TEST                            _Static_assert(1, "@Test");
 #define VALIDATOR                       _Static_assert(1, "@Validator");
