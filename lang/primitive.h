@@ -42,6 +42,7 @@ typedef void*        any;
  * const any generic: the pointer moves, the bytes behind it do not. `const any`
  * is `void *const`, a const pointer, and a qualifier on a parameter is
  * discarded by the language, so it promises nothing about the data.
+ * <p>
  * also idk but i guess thats how c grammar works lol.. thought it can be appended thru keywords.
  */
 typedef const void*  const_any;
